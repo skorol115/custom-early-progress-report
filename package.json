@@ -1,7 +1,7 @@
 {
-  "name": "@brightspace-ui/custom-early-progress-report",
+  "name": "d2l-custom-early-progress-report",
   "description": "Early Progress Report custom tool.",
-  "repository": "https://github.com/BrightspaceUI/custom-early-progress-report.git",
+  "repository": "https://github.com/Brightspace/custom-early-progress-report.git",
   "scripts": {
     "lint": "npm run lint:eslint && npm run lint:lit && npm run lint:style",
     "lint:eslint": "eslint . --ext .js,.html",
