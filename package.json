@@ -33,7 +33,7 @@
   },
   "files": [
     "custom-early-progress-report.js",
-    "/locales"
+    "/lang"
   ],
   "publishConfig": {
     "access": "public"
