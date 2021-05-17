@@ -1,1 +1,1 @@
-import "./src/components/custom-early-progress-report";
+import './src/components/custom-early-progress-report';

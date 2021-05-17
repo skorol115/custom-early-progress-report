@@ -1,6 +1,6 @@
-import { css, html, LitElement } from 'lit-element/lit-element.js';
+import './pages/cepr-user-selection-page';
 
-import "./pages/cepr-user-selection-page";
+import { html, LitElement } from 'lit-element/lit-element.js';
 
 class CustomEarlyProgressReport extends LitElement {
 	render() {

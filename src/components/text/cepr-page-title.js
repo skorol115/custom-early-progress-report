@@ -1,5 +1,4 @@
 import { css, html, LitElement } from 'lit-element/lit-element.js';
-import { LocalizeDynamicMixin } from '@brightspace-ui/core/mixins/localize-dynamic-mixin.js';
 
 class CeprPageTitle extends LitElement {
 	static get styles() {
