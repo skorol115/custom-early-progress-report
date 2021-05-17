@@ -33,6 +33,7 @@
   },
   "files": [
     "custom-early-progress-report.js",
+    "custom-early-progress-report.serge.json",
     "/src",
     "/lang"
   ],
