@@ -13,6 +13,7 @@ class CeprUserSelectionPage extends LocalizeDynamicMixin(LitElement) {
 	render() {
 		return html`
 			<cepr-page-title>${this.localize('toolTitle')}</cepr-page-title>
+			${this.localize('toolDescription')}
 		`;
 	}
 }
