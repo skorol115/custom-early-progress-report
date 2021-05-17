@@ -1,5 +1,5 @@
 /* eslint quotes: 0 */
 
 export default {
-	"hello": "Hello"
+	"toolTitle": "Launch Early Progress Report"
 };
