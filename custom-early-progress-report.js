@@ -1,14 +1,8 @@
+import './src/components/pages/cepr-user-selection-page';
+
 import { css, html, LitElement } from 'lit-element/lit-element.js';
-import { LocalizeDynamicMixin } from '@brightspace-ui/core/mixins/localize-dynamic-mixin.js';
 
-class CustomEarlyProgressReport extends LocalizeDynamicMixin(LitElement) {
-
-	static get properties() {
-		return {
-			prop1: { type: String },
-		};
-	}
-
+class CustomEarlyProgressReport extends LitElement {
 	static get styles() {
 		return css`
 			:host {
@@ -20,21 +14,9 @@ class CustomEarlyProgressReport extends LocalizeDynamicMixin(LitElement) {
 		`;
 	}
 
-	static get localizeConfig() {
-		return {
-			importFunc: async lang => (await import(`./lang/${lang}.js`)).default
-		};
-	}
-
-	constructor() {
-		super();
-
-		this.prop1 = 'custom-early-progress-report';
-	}
-
 	render() {
 		return html`
-			<h2>${this.localize('hello')} ${this.prop1}!</h2>
+			<cepr-user-selection-page></cepr-user-selection-page>
 		`;
 	}
 }
