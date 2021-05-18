@@ -93,7 +93,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	async _queryUsers() {
 		this.isQuerying = true;
 
-		// TODO: actually fetch logs
+		// TODO: actually fetch users
 		this.users.set(1, {
 			id: 1,
 			name: "last 1, first 1",
@@ -199,9 +199,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 						<th>${this.localize('lastAccessedTableHeader')}</th>
 					</thead>
 					<tbody>
-						${ Array.from( this.users ).map(([userId, user]) => this._renderUser(user)) }
+						${ this.isQuerying ? '' : Array.from( this.users ).map(([userId, user]) => this._renderUser(user)) }
 					</tbody>
 				</table>
+				${ this.isQuerying ? this._renderSpinner() : '' }
 			</d2l-table-wrapper>
 			<d2l-labs-pagination
 				id="user-pagination"
