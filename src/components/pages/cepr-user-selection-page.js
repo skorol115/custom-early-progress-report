@@ -19,6 +19,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			pageSize: {
 				type: Number
 			},
+			// TODO - convert to array if Map isn't necessary
 			users: {
 				type: Map
 			},
@@ -27,7 +28,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			isQuerying: {
 				type: Boolean
-			}, selectedUsers: {
+			},
+			selectedUsers: {
 				type: Set
 			}
 		};
