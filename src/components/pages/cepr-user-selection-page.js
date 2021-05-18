@@ -1,16 +1,158 @@
-import { html, LitElement } from 'lit-element/lit-element.js';
+import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
+import '@brightspace-ui-labs/pagination/pagination.js';
+import 'd2l-table/d2l-table-wrapper.js';
+import { css, html, LitElement } from 'lit-element/lit-element.js';
+import { d2lTableStyles } from '../../style/d2l-table-styles.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
+	static get properties() {
+		return {
+			pageNumber: {
+				type: Number
+			},
+			maxPage: {
+				type: Number
+			},
+			pageSize: {
+				type: Number
+			},
+			users: {
+				type: Array
+			},
+			isLoading: {
+				type: Boolean
+			},
+			isQuerying: {
+				type: Boolean
+			}
+		};
+	}
+
 	static get styles() {
-		return [ heading1Styles ];
+		return [
+			heading1Styles,
+			d2lTableStyles,
+			css`
+				:host {
+					display: inline-block;
+					width: 100%;
+				}
+
+				:host([hidden]) {
+					display: none;
+				}
+
+				.d2l-spinner {
+					display: flex;
+					margin: 48px;
+				}
+			`
+		];
+	}
+
+	constructor() {
+		super();
+		this.pageNumber = 1;
+		this.maxPage = 5;
+		this.pageSize = 1;
+		this.users = [];
+
+		this.isLoading = true;
+		this.isQuerying = false;
+	}
+
+	async connectedCallback() {
+		super.connectedCallback();
+
+		this.isLoading = true;
+
+		await this._queryNumUsers();
+		await this._queryUsers();
+
+		this.isLoading = false;
+	}
+
+	async _queryNumUsers() {
+		// TODO: actually fetch the number of users
+		const numUsers = 100;
+		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
+	}
+
+	async _queryUsers() {
+		this.isQuerying = true;
+
+		// TODO: actually fetch logs
+
+		this.isQuerying = false;
+	}
+
+	async _handleItemsPerPageChange(event) {
+
+		// Update the page count and total # of logs
+		this.pageSize = event.detail.itemCount;
+		await this._queryNumUsers();
+
+		// If the number of total logs and the new page size no longer support the current page, adjust it
+		this.pageNumber = Math.min(this.pageNumber, this.maxPage);
+
+		// Re-query the page of logs with new pagination values
+		await this._queryUsers();
+	}
+
+	async _handlePageChange(event) {
+		this.pageNumber = event.detail.page;
+		await this._queryUsers();
+	}
+
+	_renderSpinner() {
+		return html`
+			<d2l-loading-spinner
+				class="d2l-spinner"
+				size=100>
+			</d2l-loading-spinner>
+		`;
+	}
+
+	_renderUsers() {
+		return html`
+			<d2l-table-wrapper>
+				<table class="d2l-table">
+					<thead>
+						<th>Column 1</th>
+						<th>Column 2</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td>a</td>
+							<td>b</td>
+						</tr>
+						<tr>
+							<td>c</td>
+							<td>d</td>
+						</tr>
+					</tbody>
+				</table>
+			</d2l-table-wrapper>
+			<d2l-labs-pagination
+				id="user-pagination"
+				page-number="${ this.pageNumber }"
+				max-page-number="${ this.maxPage }"
+				show-item-count-select
+				item-count-options="[1, 2, 3]"
+				selected-count-option="${ this.pageSize }"
+				@pagination-page-change="${ this._handlePageChange }"
+				@pagination-item-counter-change="${ this._handleItemsPerPageChange }"
+			></d2l-labs-pagination>
+		`;
 	}
 
 	render() {
 		return html`
 			<h1 class="d2l-heading-1">${this.localize('toolTitle')}</h1>
 			${this.localize('toolDescription')}
+			${ this.isLoading ? this._renderSpinner() : this._renderUsers() }
 		`;
 	}
 }
