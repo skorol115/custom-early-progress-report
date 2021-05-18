@@ -166,6 +166,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		return html`
 			<tr>
 				<td>
+					<!-- TODO - add aria label to checkbox -->
 					<d2l-input-checkbox
 						@change="${this._selectUser}"
 						id="${user.id}"
