@@ -3,8 +3,8 @@ import { Routes } from './routes';
 export class EprRequests {
 
 	// API Routes
-	static async getUsers(pageNumber, pageSize) {
-		return await this._get(Routes.Users(pageNumber, pageSize));
+	static async getUsers(pageNumber, pageSize, sortField, sortDesc) {
+		return await this._get(Routes.Users(pageNumber, pageSize, sortField, sortDesc));
 	}
 
 	static async getNumUsers() {

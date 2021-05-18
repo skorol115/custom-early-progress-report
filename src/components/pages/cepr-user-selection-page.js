@@ -2,10 +2,19 @@ import '@brightspace-ui/core/components/inputs/input-checkbox.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
 import 'd2l-table/d2l-table-wrapper.js';
+import 'd2l-table/d2l-table-col-sort-button';
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { d2lTableStyles } from '../../style/d2l-table-styles.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
+
+const SortableColumn = {
+	LastName: 0,
+	FirstName: 1,
+	OrgDefinedId: 2,
+	Role: 3,
+	LastAccessed: 4
+};
 
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
@@ -31,6 +40,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			selectedUsers: {
 				type: Set
+			},
+			sortField: {
+				type: Number
+			},
+			sortDesc: {
+				type: Boolean
 			}
 		};
 	}
@@ -66,6 +81,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.pageNumber = 1;
 		this.maxPage = 5;
 		this.pageSize = 1;
+		this.sortField = SortableColumn.LastName;
+		this.sortDesc = false;
 		this.users = new Map();
 		this.selectedUsers = new Set();
 
@@ -193,7 +210,18 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 								ariaLabel="${this.localize('selectAllAriaLabel')}"
 							></d2l-input-checkbox>
 						</th>
-						<th>${this.localize('nameTableHeader')}</th>
+						<th>
+							<d2l-table-col-sort-button
+								?nosort="${this.sortField !== SortableColumn.LastName}"
+							>
+								${this.localize('lastNameTableHeader')}
+							</d2l-table-col-sort-button>,
+							<d2l-table-col-sort-button
+								?nosort="${this.sortField !== SortableColumn.FirstName}"
+							>
+								${this.localize('firstNameTableHeader')}
+							</d2l-table-col-sort-button>
+						</th>
 						<th>${this.localize('userNameTableHeader')}</th>
 						<th>${this.localize('orgTableHeader')}</th>
 						<th>${this.localize('roleTableHeader')}</th>
