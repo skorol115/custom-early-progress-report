@@ -1,3 +1,4 @@
+import '@brightspace-ui/core/components/inputs/input-checkbox.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
 import 'd2l-table/d2l-table-wrapper.js';
@@ -19,13 +20,15 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				type: Number
 			},
 			users: {
-				type: Array
+				type: Map
 			},
 			isLoading: {
 				type: Boolean
 			},
 			isQuerying: {
 				type: Boolean
+			}, selectedUsers: {
+				type: Set
 			}
 		};
 	}
@@ -48,6 +51,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					display: flex;
 					margin: 48px;
 				}
+
+				d2l-input-checkbox {
+					margin: 0px;
+				}
 			`
 		];
 	}
@@ -57,7 +64,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.pageNumber = 1;
 		this.maxPage = 5;
 		this.pageSize = 1;
-		this.users = [];
+		this.users = new Map();
+		this.selectedUsers = new Set();
 
 		this.isLoading = true;
 		this.isQuerying = false;
@@ -84,6 +92,23 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 
 		// TODO: actually fetch logs
+		this.users.set(1, {
+			id: 1,
+			name: "last 1, first 1",
+			userName: "user1",
+			orgId: 6606,
+			role: 123,
+			lastAccessed: "date 1"
+		});
+
+		this.users.set(2, {
+			id: 2,
+			name: "last 2, first 2",
+			userName: "user2",
+			orgId: 6606,
+			role: 1234,
+			lastAccessed: "date 2"
+		});
 
 		this.isQuerying = false;
 	}
@@ -115,23 +140,64 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_selectAllItemsEvent(e) {
+		const checkAllItems = e.target.checked;
+		if (checkAllItems) {
+			this.users.forEach(user => this.selectedUsers.add(user.id));
+		} else {
+			this.selectedUsers.clear();
+		}
+		this.requestUpdate();
+	}
+
+	_selectUser(e) {
+		const userSelected = e.target.checked;
+		const userId = e.target.id;
+		if (userSelected) {
+			this.selectedUsers.add(userId);
+		} else {
+			this.selectedUsers.delete(userId);
+		}
+	}
+
+	_renderUser(user) {
+		return html`
+			<tr>
+				<td>
+					<d2l-input-checkbox
+						@change="${this._selectUser}"
+						id="${user.id}"
+						?checked="${this.selectedUsers.has(user.id)}"
+					></d2l-input-checkbox>
+				</td>
+				<td>${user.name}</td>
+				<td>${user.userName}</td>
+				<td>${user.orgId}</td>
+				<td>${user.role}</td>
+				<td>${user.lastAccessed}</td>
+			</tr>
+		`;
+	}
+
 	_renderUsers() {
 		return html`
 			<d2l-table-wrapper>
 				<table class="d2l-table">
 					<thead>
-						<th>Column 1</th>
-						<th>Column 2</th>
+						<th>
+							<d2l-input-checkbox
+								@change="${this._selectAllItemsEvent}"
+								ariaLabel="${this.localize('selectAllAriaLabel')}"
+							></d2l-input-checkbox>
+						</th>
+						<th>${this.localize('nameTableHeader')}</th>
+						<th>${this.localize('userNameTableHeader')}</th>
+						<th>${this.localize('orgTableHeader')}</th>
+						<th>${this.localize('roleTableHeader')}</th>
+						<th>${this.localize('lastAccessedTableHeader')}</th>
 					</thead>
 					<tbody>
-						<tr>
-							<td>a</td>
-							<td>b</td>
-						</tr>
-						<tr>
-							<td>c</td>
-							<td>d</td>
-						</tr>
+						${ Array.from( this.users ).map(([userId, user]) => this._renderUser(user)) }
 					</tbody>
 				</table>
 			</d2l-table-wrapper>
