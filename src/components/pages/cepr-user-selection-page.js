@@ -183,7 +183,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			this.users.forEach(user => this.selectedUsers.add(user.UserId));
 		} else {
 			// TODO: are we clearing ALL selected or just those selected on this page?
-			this.selectedUsers.clear();
+			this.users.forEach(user => this.selectedUsers.delete(user.UserId));
 		}
 		this.requestUpdate();
 	}
@@ -215,7 +215,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		return html`
 			<tr>
 				<td>
-					<!-- TODO - add aria label to checkbox -->
 					<d2l-input-checkbox
 						@change=${this._selectUser}
 						id="${user.UserId}"
@@ -239,7 +238,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 						<th>
 							<d2l-input-checkbox
 								@change=${this._selectAllItemsEvent}
-								ariaLabel="${this.localize('selectAllAriaLabel')}"
 							></d2l-input-checkbox>
 						</th>
 						<th>

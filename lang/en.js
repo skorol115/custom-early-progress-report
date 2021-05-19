@@ -8,6 +8,5 @@ export default {
 	"userNameTableHeader": "Username",
 	"orgTableHeader": "OrgDefinedId",
 	"roleTableHeader": "Role",
-	"lastAccessedTableHeader": "Last Accessed",
-	"selectAllAriaLabel": "Select all users checkbox"
+	"lastAccessedTableHeader": "Last Accessed"
 };
