@@ -179,15 +179,28 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		}
 	}
 
+	_handleSort(e) {
+		console.dir(e);
+		const sortHeaderElement = e.target;
+ 		const selectedSortField = parseInt(sortHeaderElement.getAttribute('value'));
+		if (selectedSortField === this.sortField) {
+			this.sortDesc = !this.sortDesc;
+		} else {
+			this.sortField = selectedSortField;
+			this.sortDesc = false;
+		}
+		// TODO - fetch new results based on updated sort info
+	}
+
 	_renderUser(user) {
 		return html`
 			<tr>
 				<td>
 					<!-- TODO - add aria label to checkbox -->
 					<d2l-input-checkbox
-						@change="${this._selectUser}"
+						@change=${this._selectUser}
 						id="${user.id}"
-						?checked="${this.selectedUsers.has(user.id)}"
+						?checked=${this.selectedUsers.has(user.id)}
 					></d2l-input-checkbox>
 				</td>
 				<td>${user.name}</td>
@@ -206,26 +219,59 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					<thead>
 						<th>
 							<d2l-input-checkbox
-								@change="${this._selectAllItemsEvent}"
+								@change=${this._selectAllItemsEvent}
 								ariaLabel="${this.localize('selectAllAriaLabel')}"
 							></d2l-input-checkbox>
 						</th>
 						<th>
 							<d2l-table-col-sort-button
-								?nosort="${this.sortField !== SortableColumn.LastName}"
+								?nosort=${this.sortField !== SortableColumn.LastName}
+								?desc=${this.sortDesc}
+								value=${SortableColumn.LastName}
+								@click=${this._handleSort}
 							>
 								${this.localize('lastNameTableHeader')}
 							</d2l-table-col-sort-button>,
 							<d2l-table-col-sort-button
-								?nosort="${this.sortField !== SortableColumn.FirstName}"
+								?nosort=${this.sortField !== SortableColumn.FirstName}
+								?desc=${this.sortDesc}
+								value=${SortableColumn.FirstName}
+								@click=${this._handleSort}
 							>
 								${this.localize('firstNameTableHeader')}
 							</d2l-table-col-sort-button>
 						</th>
 						<th>${this.localize('userNameTableHeader')}</th>
-						<th>${this.localize('orgTableHeader')}</th>
-						<th>${this.localize('roleTableHeader')}</th>
-						<th>${this.localize('lastAccessedTableHeader')}</th>
+						<th>
+							<d2l-table-col-sort-button
+								?nosort=${this.sortField !== SortableColumn.OrgDefinedId}
+								?desc=${this.sortDesc}
+								value=${SortableColumn.OrgDefinedId}
+								@click=${this._handleSort}
+							>
+								${this.localize('orgTableHeader')}
+							</d2l-table-col-sort-button>
+						</th>
+						<th>
+							<d2l-table-col-sort-button
+								?nosort=${this.sortField !== SortableColumn.Role}
+								?desc=${this.sortDesc}
+								value=${SortableColumn.Role}
+								@click=${this._handleSort}
+							>
+								${this.localize('roleTableHeader')}
+							</d2l-table-col-sort-button>
+						</th>
+						<th>
+							<d2l-table-col-sort-button
+								?nosort=${this.sortField !== SortableColumn.LastAccessed}
+								?desc=${this.sortDesc}
+								value=${SortableColumn.LastAccessed}
+								@click=${this._handleSort}
+							>
+								${this.localize('lastAccessedTableHeader')}
+							</d2l-table-col-sort-button>
+						</th>
 					</thead>
 					<tbody>
 						${ this.isQuerying ? '' : Array.from( this.users ).map(([userId, user]) => this._renderUser(user)) }
@@ -235,13 +281,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			</d2l-table-wrapper>
 			<d2l-labs-pagination
 				id="user-pagination"
-				page-number="${ this.pageNumber }"
-				max-page-number="${ this.maxPage }"
+				page-number="${this.pageNumber}"
+				max-page-number="${this.maxPage}"
 				show-item-count-select
 				item-count-options="[1, 2, 3]"
-				selected-count-option="${ this.pageSize }"
-				@pagination-page-change="${ this._handlePageChange }"
-				@pagination-item-counter-change="${ this._handleItemsPerPageChange }"
+				selected-count-option="${this.pageSize}"
+				@pagination-page-change=${this._handlePageChange}
+				@pagination-item-counter-change=${this._handleItemsPerPageChange}
 			></d2l-labs-pagination>
 		`;
 	}
