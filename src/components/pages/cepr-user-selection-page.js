@@ -16,6 +16,40 @@ const SortableColumn = {
 	LastAccessed: 4
 };
 
+// TODO delete the test data
+const TestUsers = [
+    {
+        UserId: 414,
+        LastName: 'IPSIS',
+        FirstName: 'LIS_STUDENT_04',
+        UserName: 'LIS_STUDENT_04',
+        OrgDefinedId: 'LIS_STUDENT_04.IPSIS',
+        RoleId: 578,
+        RoleName: 'End User',
+        LastCourseHomepageAccess: null
+    },
+    {
+        UserId: 415,
+        LastName: 'IPSIS',
+        FirstName: 'LIS_STUDENT_05',
+        UserName: 'LIS_STUDENT_05',
+        OrgDefinedId: 'LIS_STUDENT_05.IPSIS',
+        RoleId: 578,
+        RoleName: 'End User',
+        LastCourseHomepageAccess: null
+    },
+    {
+        UserId: 416,
+        LastName: 'IPSIS',
+        FirstName: 'LIS_STUDENT_06',
+        UserName: 'LIS_STUDENT_06',
+        OrgDefinedId: 'LIS_STUDENT_06.IPSIS',
+        RoleId: 578,
+        RoleName: 'End User',
+    	LastCourseHomepageAccess: null
+    }
+];
+
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
@@ -28,9 +62,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			pageSize: {
 				type: Number
 			},
-			// TODO - convert to array if Map isn't necessary
 			users: {
-				type: Map
+				type: Array
 			},
 			isLoading: {
 				type: Boolean
@@ -83,7 +116,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.pageSize = 1;
 		this.sortField = SortableColumn.LastName;
 		this.sortDesc = false;
-		this.users = new Map();
+		this.users = [];
 		this.selectedUsers = new Set();
 
 		this.isLoading = true;
@@ -111,23 +144,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 
 		// TODO: actually fetch users
-		this.users.set(1, {
-			id: 1,
-			name: "last 1, first 1",
-			userName: "user1",
-			orgId: 6606,
-			role: 123,
-			lastAccessed: "date 1"
-		});
-
-		this.users.set(2, {
-			id: 2,
-			name: "last 2, first 2",
-			userName: "user2",
-			orgId: 6606,
-			role: 1234,
-			lastAccessed: "date 2"
-		});
+		this.users = TestUsers;
 
 		this.isQuerying = false;
 	}
@@ -162,8 +179,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
 		if (checkAllItems) {
-			this.users.forEach(user => this.selectedUsers.add(user.id));
+			// TODO: are we adding all on this page or ALL users
+			this.users.forEach(user => this.selectedUsers.add(user.UserId));
 		} else {
+			// TODO: are we clearing ALL selected or just those selected on this page?
 			this.selectedUsers.clear();
 		}
 		this.requestUpdate();
@@ -199,15 +218,15 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					<!-- TODO - add aria label to checkbox -->
 					<d2l-input-checkbox
 						@change=${this._selectUser}
-						id="${user.id}"
-						?checked=${this.selectedUsers.has(user.id)}
+						id="${user.UserId}"
+						?checked=${this.selectedUsers.has(user.UserId)}
 					></d2l-input-checkbox>
 				</td>
-				<td>${user.name}</td>
-				<td>${user.userName}</td>
-				<td>${user.orgId}</td>
-				<td>${user.role}</td>
-				<td>${user.lastAccessed}</td>
+				<td>${user.LastName}, ${user.FirstName}</td>
+				<td>${user.UserName}</td>
+				<td>${user.OrgDefinedId}</td>
+				<td>${user.RoleId}</td>
+				<td>${user.LastCourseHomepageAccess}</td>
 			</tr>
 		`;
 	}
@@ -274,7 +293,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 						</th>
 					</thead>
 					<tbody>
-						${ this.isQuerying ? '' : Array.from( this.users ).map(([userId, user]) => this._renderUser(user)) }
+						${ this.isQuerying ? '' : this.users.map(user => this._renderUser(user)) }
 					</tbody>
 				</table>
 				${ this.isQuerying ? this._renderSpinner() : '' }
