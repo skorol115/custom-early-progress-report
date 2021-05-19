@@ -12,8 +12,8 @@ const SortableColumn = {
 	LastName: 0,
 	FirstName: 1,
 	OrgDefinedId: 2,
-	Role: 3,
-	LastAccessed: 4
+	SectionName: 3,
+	LastCourseHomepageAccess: 4
 };
 
 // TODO delete the test data
@@ -22,30 +22,24 @@ const TestUsers = [
         UserId: 414,
         LastName: 'IPSIS',
         FirstName: 'LIS_STUDENT_04',
-        UserName: 'LIS_STUDENT_04',
         OrgDefinedId: 'LIS_STUDENT_04.IPSIS',
-        RoleId: 578,
-        RoleName: 'End User',
+        SectionName: 'Test Section',
         LastCourseHomepageAccess: null
     },
     {
         UserId: 415,
         LastName: 'IPSIS',
         FirstName: 'LIS_STUDENT_05',
-        UserName: 'LIS_STUDENT_05',
         OrgDefinedId: 'LIS_STUDENT_05.IPSIS',
-        RoleId: 578,
-        RoleName: 'End User',
+        SectionName: 'Test Section',
         LastCourseHomepageAccess: null
     },
     {
         UserId: 416,
         LastName: 'IPSIS',
         FirstName: 'LIS_STUDENT_06',
-        UserName: 'LIS_STUDENT_06',
         OrgDefinedId: 'LIS_STUDENT_06.IPSIS',
-        RoleId: 578,
-        RoleName: 'End User',
+        SectionName: 'Test Section',
     	LastCourseHomepageAccess: null
     }
 ];
@@ -222,9 +216,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					></d2l-input-checkbox>
 				</td>
 				<td>${user.LastName}, ${user.FirstName}</td>
-				<td>${user.UserName}</td>
 				<td>${user.OrgDefinedId}</td>
-				<td>${user.RoleId}</td>
+				<td>${user.SectionName}</td>
 				<td>${user.LastCourseHomepageAccess}</td>
 			</tr>
 		`;
@@ -258,7 +251,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 								${this.localize('firstNameTableHeader')}
 							</d2l-table-col-sort-button>
 						</th>
-						<th>${this.localize('userNameTableHeader')}</th>
 						<th>
 							<d2l-table-col-sort-button
 								?nosort=${this.sortField !== SortableColumn.OrgDefinedId}
@@ -271,19 +263,19 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 						</th>
 						<th>
 							<d2l-table-col-sort-button
-								?nosort=${this.sortField !== SortableColumn.Role}
+								?nosort=${this.sortField !== SortableColumn.SectionName}
 								?desc=${this.sortDesc}
-								value=${SortableColumn.Role}
+								value=${SortableColumn.SectionName}
 								@click=${this._handleSort}
 							>
-								${this.localize('roleTableHeader')}
+								${this.localize('sectionNameTableHeader')}
 							</d2l-table-col-sort-button>
 						</th>
 						<th>
 							<d2l-table-col-sort-button
-								?nosort=${this.sortField !== SortableColumn.LastAccessed}
+								?nosort=${this.sortField !== SortableColumn.LastCourseHomepageAccess}
 								?desc=${this.sortDesc}
-								value=${SortableColumn.LastAccessed}
+								value=${SortableColumn.LastCourseHomepageAccess}
 								@click=${this._handleSort}
 							>
 								${this.localize('lastAccessedTableHeader')}
