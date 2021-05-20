@@ -3,12 +3,12 @@ import { Routes } from './routes';
 export class EprRequests {
 
 	// API Routes
-	static async getUsers(pageNumber, pageSize, sortField, sortDesc) {
-		return await this._get(Routes.Users(pageNumber, pageSize, sortField, sortDesc));
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc) {
+		return await this._get(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc));
 	}
 
-	static async getNumUsers() {
-		return await this._get(Routes.NumUsers());
+	static async getNumUsers(orgUnitId) {
+		return await this._get(Routes.NumUsers(orgUnitId));
 	}
 
 	// Helper Methods

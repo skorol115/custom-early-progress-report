@@ -48,6 +48,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			selectAll: {
 				type: Boolean
+			},
+			orgUnitId: {
+				type: String
 			}
 		};
 	}
@@ -103,13 +106,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await UserService.getNumUsers();
+		const numUsers = await UserService.getNumUsers(this.orgUnitId);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await UserService.getUsers(this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
+		this.users = await UserService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
 		this.isQuerying = false;
 	}
 
