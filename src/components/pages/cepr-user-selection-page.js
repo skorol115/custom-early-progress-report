@@ -7,6 +7,7 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { d2lTableStyles } from '../../style/d2l-table-styles.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
+import { UserService } from '../../services/user-service';
 
 const SortableColumn = {
 	LastName: 0,
@@ -15,35 +16,6 @@ const SortableColumn = {
 	SectionName: 3,
 	LastCourseHomepageAccess: 4
 };
-
-// TODO delete the test data
-const TestUsers = [
-    {
-        UserId: 414,
-        LastName: 'IPSIS',
-        FirstName: 'LIS_STUDENT_04',
-        OrgDefinedId: 'LIS_STUDENT_04.IPSIS',
-        SectionName: 'Test Section',
-        LastCourseHomepageAccess: null
-    },
-    {
-        UserId: 415,
-        LastName: 'IPSIS',
-        FirstName: 'LIS_STUDENT_05',
-        OrgDefinedId: 'LIS_STUDENT_05.IPSIS',
-        SectionName: 'Test Section',
-        LastCourseHomepageAccess: null
-    },
-    {
-        UserId: 416,
-        LastName: 'IPSIS',
-        FirstName: 'LIS_STUDENT_06',
-        OrgDefinedId: 'LIS_STUDENT_06.IPSIS',
-        SectionName: 'Test Section',
-    	LastCourseHomepageAccess: null
-    }
-];
-
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
@@ -106,8 +78,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	constructor() {
 		super();
 		this.pageNumber = 1;
-		this.maxPage = 5;
-		this.pageSize = 1;
+		this.pageSize = 25;
 		this.sortField = SortableColumn.LastName;
 		this.sortDesc = false;
 		this.users = [];
@@ -129,17 +100,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		// TODO: actually fetch the number of users
-		const numUsers = 100;
+		const numUsers = await UserService.getNumUsers();
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-
-		// TODO: actually fetch users
-		this.users = TestUsers;
-
+		this.users = await UserService.getUsers(this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
 		this.isQuerying = false;
 	}
 
@@ -202,7 +169,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			this.sortField = selectedSortField;
 			this.sortDesc = false;
 		}
-		// TODO - fetch new results based on updated sort info
+		this.pageNumber = 1;
+		this._queryUsers();
 	}
 
 	_renderUser(user) {
@@ -293,7 +261,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				page-number="${this.pageNumber}"
 				max-page-number="${this.maxPage}"
 				show-item-count-select
-				item-count-options="[1, 2, 3]"
+				item-count-options="[25,50,75,100,200]"
 				selected-count-option="${this.pageSize}"
 				@pagination-page-change=${this._handlePageChange}
 				@pagination-item-counter-change=${this._handleItemsPerPageChange}
