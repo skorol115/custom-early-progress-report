@@ -45,6 +45,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			sortDesc: {
 				type: Boolean
+			},
+			selectAll: {
+				type: Boolean
 			}
 		};
 	}
@@ -83,7 +86,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.sortDesc = false;
 		this.users = [];
 		this.selectedUsers = new Set();
-
+		this.selectAll = false;
 		this.isLoading = true;
 		this.isQuerying = false;
 	}
@@ -125,6 +128,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _handlePageChange(event) {
 		this.pageNumber = event.detail.page;
+		// Users need to re-select all for new pages
+		this.selectAll = false;
 		await this._queryUsers();
 	}
 
@@ -139,6 +144,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
+		this.selectAll = checkAllItems;
 		if (checkAllItems) {
 			// TODO: are we adding all on this page or ALL users
 			this.users.forEach(user => this.selectedUsers.add(user.UserId));
@@ -160,7 +166,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_handleSort(e) {
-		console.dir(e);
 		const sortHeaderElement = e.target;
  		const selectedSortField = parseInt(sortHeaderElement.getAttribute('value'));
 		if (selectedSortField === this.sortField) {
@@ -170,6 +175,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			this.sortDesc = false;
 		}
 		this.pageNumber = 1;
+		// Users need to re-select all for new pages and sort parameters
+		this.selectAll = false;
 		this._queryUsers();
 	}
 
@@ -198,6 +205,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					<thead>
 						<th>
 							<d2l-input-checkbox
+								?checked=${this.selectAll}
 								@change=${this._selectAllItemsEvent}
 							></d2l-input-checkbox>
 						</th>
