@@ -9,6 +9,7 @@ import { heading1Styles  } from '@brightspace-ui/core/components/typography/styl
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 import { UserService } from '../../services/user-service';
 import { SortableColumn } from '../../constants';
+
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
