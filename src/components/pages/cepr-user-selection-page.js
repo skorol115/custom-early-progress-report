@@ -151,7 +151,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectUser(e) {
 		const userSelected = e.target.checked;
-		const userId = e.target.id;
+		const userId = parseInt(e.target.id);
 		if (userSelected) {
 			this.selectedUsers.add(userId);
 		} else {
