@@ -8,14 +8,7 @@ import { d2lTableStyles } from '../../style/d2l-table-styles.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 import { UserService } from '../../services/user-service';
-
-const SortableColumn = {
-	LastName: 0,
-	FirstName: 1,
-	OrgDefinedId: 2,
-	SectionName: 3,
-	LastCourseHomepageAccess: 4
-};
+import { SortableColumn } from '../../constants';
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
@@ -77,6 +70,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				d2l-input-checkbox {
 					margin: 0px;
 				}
+
+				d2l-table-wrapper {
+					margin-top: 30px;
+				}
 			`
 		];
 	}
@@ -117,15 +114,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _handleItemsPerPageChange(event) {
-
-		// Update the page count and total # of logs
+		// Update the page count and total # of users
 		this.pageSize = event.detail.itemCount;
 		await this._queryNumUsers();
-
-		// If the number of total logs and the new page size no longer support the current page, adjust it
-		this.pageNumber = Math.min(this.pageNumber, this.maxPage);
-
-		// Re-query the page of logs with new pagination values
 		await this._queryUsers();
 	}
 
@@ -149,12 +140,11 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		const checkAllItems = e.target.checked;
 		this.selectAll = checkAllItems;
 		if (checkAllItems) {
-			// TODO: are we adding all on this page or ALL users
 			this.users.forEach(user => this.selectedUsers.add(user.UserId));
 		} else {
-			// TODO: are we clearing ALL selected or just those selected on this page?
 			this.users.forEach(user => this.selectedUsers.delete(user.UserId));
 		}
+		// need to re-render table with new selection updates
 		this.requestUpdate();
 	}
 
