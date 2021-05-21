@@ -11,15 +11,13 @@ export const d2lTableStyles = css`
 		--d2l-table-border: 1px solid var(--d2l-table-border-color);
 		--d2l-table-border-radius: 0.3rem;
 		--d2l-table-header-background-color: var(--d2l-color-regolith);
-
 		--d2l-table-light-border-color: var(--d2l-color-gypsum);
 		--d2l-table-light-border: 1px solid var(--d2l-table-light-border-color);
-		--d2l-table-light-header-background-color: #fff;
-
-		--d2l-table-body-background-color: #fff;
+		--d2l-table-light-header-background-color: #ffffff;
+		--d2l-table-body-background-color: #ffffff;
 		--d2l-table-row-background-color-active: var(--d2l-color-celestine-plus-2);
 		--d2l-table-row-border-color-active-selected: var(--d2l-color-celestine-plus-1);
-		--d2l-table-row-background-color-active-selected: #EBF5FC;
+		--d2l-table-row-background-color-active-selected: #ebf5fc;
 		--d2l-table-row-border-color-selected: var(--d2l-color-celestine-plus-1);
 		--d2l-table-row-background-color-selected: var(--d2l-color-celestine-plus-2);
 	}
@@ -27,7 +25,7 @@ export const d2lTableStyles = css`
 	/* Table Styles */
 	.d2l-table {
 		background-color: transparent;
-		border-collapse: separate!important;
+		border-collapse: separate !important;
 		border-spacing: 0;
 		display: table;
 		font-size: 0.8rem;
@@ -56,8 +54,8 @@ export const d2lTableStyles = css`
 	d2l-table-wrapper[type="default"] .d2l-table > * > tr > th,
 	d2l-table[type="default"] d2l-td,
 	d2l-table[type="default"] d2l-th {
-		border-top: var(--d2l-table-border);
 		border-right: var(--d2l-table-border);
+		border-top: var(--d2l-table-border);
 		display: table-cell;
 		font-weight: inherit;
 		height: 41px; /* min-height to be 62px including border */
@@ -105,10 +103,10 @@ export const d2lTableStyles = css`
 		color: var(--d2l-color-ferrite);
 		font-family: inherit;
 		font-size: 0.7rem;
+		height: 27px; /* min-height to be 48px including border */
 		line-height: 0.9rem;
 		margin: 1rem 0;
 		padding: 0.5rem 1rem;
-		height: 27px; /* min-height to be 48px including border */
 	}
 	d2l-table-wrapper[type="light"] .d2l-table > thead > tr > th,
 	d2l-table-wrapper[type="light"] .d2l-table > * > tr[header] > th,
@@ -124,9 +122,9 @@ export const d2lTableStyles = css`
 		padding: 0.6rem;
 	}
 	d2l-table-wrapper[type="light"] .d2l-table > thead > tr.d2l-table-row-first > th,
-	d2l-table-wrapper[type="light"] .d2l-table > * > tr[header].d2l-table-row-first  > th,
-	d2l-table[type="light"] d2l-thead > d2l-tr.d2l-table-row-first  > d2l-th,
-	d2l-table[type="light"] d2l-tr[header].d2l-table-row-first  > d2l-th {
+	d2l-table-wrapper[type="light"] .d2l-table > * > tr[header].d2l-table-row-first > th,
+	d2l-table[type="light"] d2l-thead > d2l-tr.d2l-table-row-first > d2l-th,
+	d2l-table[type="light"] d2l-tr[header].d2l-table-row-first > d2l-th {
 		border-top: none;
 	}
 	/* border radiuses */
@@ -235,7 +233,7 @@ export const d2lTableStyles = css`
 	d2l-table-wrapper[type="light"] .d2l-table-row-last[selected] > th,
 	d2l-table[type="light"] .d2l-table-row-last[selected] > d2l-td,
 	d2l-table[type="light"] .d2l-table-row-last[selected] > d2l-th {
-		border-bottom-color:var(--d2l-table-row-border-color-selected);
+		border-bottom-color: var(--d2l-table-row-border-color-selected);
 	}
 	/* no-column-border */
 	d2l-table-wrapper[type="default"] .d2l-table[no-column-border] > tbody > tr > td:not(.d2l-table-cell-last),
@@ -308,11 +306,11 @@ export const d2lTableStyles = css`
 	d2l-table-wrapper[type="light"][sticky-headers] tr[header]:not(.d2l-table-row-first) th,
 	d2l-table-wrapper[type="light"][sticky-headers] tr[header]:not(.d2l-table-row-first) td,
 	d2l-table-wrapper[type="light"][sticky-headers] thead tr:not(:first-child) th {
+		border-left: none;
+		border-top: none;
 		position: -webkit-sticky;
 		position: sticky;
 		top: -5px;
-		border-left: none;
-		border-top: none;
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] tr[header]:not(.d2l-table-row-first) th,
 	d2l-table-wrapper[type="default"][sticky-headers] tr[header]:not(.d2l-table-row-first) td,
@@ -339,13 +337,13 @@ export const d2lTableStyles = css`
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] tbody tr:not([header]) td,
 	d2l-table-wrapper[type="default"][sticky-headers] tbody tr:not([header]) th {
-		border-top: var(--d2l-table-border);
 		border-bottom: none;
+		border-top: var(--d2l-table-border);
 	}
 	d2l-table-wrapper[type="light"][sticky-headers] tbody tr:not([header]) td,
 	d2l-table-wrapper[type="light"][sticky-headers] tbody tr:not([header]) th {
-		border-top: var(--d2l-table-light-border);
 		border-bottom: none;
+		border-top: var(--d2l-table-light-border);
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] tr[header] + tr:not([header]) td,
 	d2l-table-wrapper[type="default"][sticky-headers] tr[header] + tr:not([header]) th,
@@ -354,9 +352,9 @@ export const d2lTableStyles = css`
 	d2l-table-wrapper[type="light"][sticky-headers] tr[header] + tr:not([header]) td,
 	d2l-table-wrapper[type="light"][sticky-headers] tr[header] + tr:not([header]) th,
 	d2l-table-wrapper[type="light"][sticky-headers] tbody tr:not([header]):not([selected]):first-child td,
-	d2l-table-wrapper[type="light"][sticky-headers] tbody tr:not([header]):not([selected]):first-child th  {
-		border-top: none;
+	d2l-table-wrapper[type="light"][sticky-headers] tbody tr:not([header]):not([selected]):first-child th {
 		border-bottom: none;
+		border-top: none;
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > thead > tr[header] + tr:not([header])[selected] > td,
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > tbody > tr[header] + tr:not([header])[selected] > td,
@@ -380,8 +378,8 @@ export const d2lTableStyles = css`
 	d2l-table-wrapper[type="light"][sticky-headers] tr[header] th[sticky],
 	d2l-table-wrapper[type="light"][sticky-headers] tr[header] td[sticky],
 	d2l-table-wrapper[type="light"][sticky-headers] thead > tr > th[sticky] {
-		z-index: 3;
 		left: 0;
+		z-index: 3;
 	}
 	[dir="rtl"] d2l-table-wrapper[type="default"][sticky-headers] th[sticky],
 	[dir="rtl"] d2l-table-wrapper[type="default"][sticky-headers] td[sticky],
@@ -394,12 +392,12 @@ export const d2lTableStyles = css`
 		border-left: none;
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] tbody :not([header]) [sticky],
-	d2l-table-wrapper[type="light"][sticky-headers] tbody :not([header]) [sticky]{
+	d2l-table-wrapper[type="light"][sticky-headers] tbody :not([header]) [sticky] {
+		background-color: inherit;
+		left: 0;
 		position: -webkit-sticky;
 		position: sticky;
-		left: 0;
 		z-index: 1;
-		background-color: inherit;
 	}
 	[dir="rtl"] d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > thead > tr > td,
 	[dir="rtl"] d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > tbody > tr > td,
@@ -449,11 +447,11 @@ export const d2lTableStyles = css`
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > tbody > tr.d2l-table-row-last > td,
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > tbody > tr.d2l-table-row-last > th {
-		border-bottom: var(--d2l-table-border)
+		border-bottom: var(--d2l-table-border);
 	}
 	d2l-table-wrapper[type="light"][sticky-headers] .d2l-table > tbody > tr.d2l-table-row-last > td,
 	d2l-table-wrapper[type="light"][sticky-headers] .d2l-table > tbody > tr.d2l-table-row-last > th {
-		border-bottom: var(--d2l-table-light-border)
+		border-bottom: var(--d2l-table-light-border);
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table tr[selected].d2l-table-row-last td,
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table tr[selected].d2l-table-row-last th,
@@ -462,11 +460,11 @@ export const d2lTableStyles = css`
 		border-bottom-color: var(--d2l-table-row-border-color-selected);
 	}
 	d2l-table-wrapper[type="default"][sticky-headers] .d2l-table > tbody > tr.d2l-table-row-first.d2l-table-row-last > td.d2l-table-cell-first.d2l-table-cell-last {
-		border-top: var(--d2l-table-border);
 		border-bottom: var(--d2l-table-border);
+		border-top: var(--d2l-table-border);
 	}
 	d2l-table-wrapper[type="light"][sticky-headers] .d2l-table > tbody > tr.d2l-table-row-first.d2l-table-row-last > td.d2l-table-cell-first.d2l-table-cell-last {
-		border-top: var(--d2l-table-light-border);
 		border-bottom: var(--d2l-table-light-border);
+		border-top: var(--d2l-table-light-border);
 	}
 `;

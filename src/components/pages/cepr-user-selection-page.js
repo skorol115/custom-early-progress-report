@@ -7,8 +7,8 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { d2lTableStyles } from '../../style/d2l-table-styles.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
-import { UserService } from '../../services/user-service';
 import { SortableColumn } from '../../constants';
+import { UserService } from '../../services/user-service';
 
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
@@ -69,7 +69,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				}
 
 				d2l-input-checkbox {
-					margin: 0px;
+					margin: 0;
 				}
 
 				d2l-table-wrapper {
@@ -103,15 +103,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isLoading = false;
 	}
 
-	async _queryNumUsers() {
-		const numUsers = await UserService.getNumUsers(this.orgUnitId);
-		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
-	}
-
-	async _queryUsers() {
-		this.isQuerying = true;
-		this.users = await UserService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
-		this.isQuerying = false;
+	render() {
+		return html`
+			<h1 class="d2l-heading-1">${this.localize('toolTitle')}</h1>
+			${this.localize('toolDescription')}
+			${ this.isLoading ? this._renderSpinner() : this._renderUsers() }
+		`;
 	}
 
 	async _handleItemsPerPageChange(event) {
@@ -128,40 +125,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		await this._queryUsers();
 	}
 
-	_renderSpinner() {
-		return html`
-			<d2l-loading-spinner
-				class="d2l-spinner"
-				size=100>
-			</d2l-loading-spinner>
-		`;
-	}
-
-	_selectAllItemsEvent(e) {
-		const checkAllItems = e.target.checked;
-		this.selectAll = checkAllItems;
-		if (checkAllItems) {
-			this.users.forEach(user => this.selectedUsers.add(user.UserId));
-		} else {
-			this.users.forEach(user => this.selectedUsers.delete(user.UserId));
-		}
-		// need to re-render table with new selection updates
-		this.requestUpdate();
-	}
-
-	_selectUser(e) {
-		const userSelected = e.target.checked;
-		const userId = parseInt(e.target.id);
-		if (userSelected) {
-			this.selectedUsers.add(userId);
-		} else {
-			this.selectedUsers.delete(userId);
-		}
-	}
-
 	_handleSort(e) {
 		const sortHeaderElement = e.target;
- 		const selectedSortField = parseInt(sortHeaderElement.getAttribute('value'));
+		const selectedSortField = parseInt(sortHeaderElement.getAttribute('value'));
 		if (selectedSortField === this.sortField) {
 			this.sortDesc = !this.sortDesc;
 		} else {
@@ -172,6 +138,26 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		// Users need to re-select all for new pages and sort parameters
 		this.selectAll = false;
 		this._queryUsers();
+	}
+
+	async _queryNumUsers() {
+		const numUsers = await UserService.getNumUsers(this.orgUnitId);
+		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
+	}
+
+	async _queryUsers() {
+		this.isQuerying = true;
+		this.users = await UserService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
+		this.isQuerying = false;
+	}
+
+	_renderSpinner() {
+		return html`
+			<d2l-loading-spinner
+				class="d2l-spinner"
+				size=100>
+			</d2l-loading-spinner>
+		`;
 	}
 
 	_renderUser(user) {
@@ -271,12 +257,26 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		`;
 	}
 
-	render() {
-		return html`
-			<h1 class="d2l-heading-1">${this.localize('toolTitle')}</h1>
-			${this.localize('toolDescription')}
-			${ this.isLoading ? this._renderSpinner() : this._renderUsers() }
-		`;
+	_selectAllItemsEvent(e) {
+		const checkAllItems = e.target.checked;
+		this.selectAll = checkAllItems;
+		if (checkAllItems) {
+			this.users.forEach(user => this.selectedUsers.add(user.UserId));
+		} else {
+			this.users.forEach(user => this.selectedUsers.delete(user.UserId));
+		}
+		// need to re-render table with new selection updates
+		this.requestUpdate();
+	}
+
+	_selectUser(e) {
+		const userSelected = e.target.checked;
+		const userId = parseInt(e.target.id);
+		if (userSelected) {
+			this.selectedUsers.add(userId);
+		} else {
+			this.selectedUsers.delete(userId);
+		}
 	}
 }
 customElements.define('cepr-user-selection-page', CeprUserSelectionPage);
