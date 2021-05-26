@@ -277,6 +277,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		} else {
 			this.selectedUsers.delete(userId);
 		}
+		this.requestUpdate();
 	}
 }
 customElements.define('cepr-user-selection-page', CeprUserSelectionPage);
