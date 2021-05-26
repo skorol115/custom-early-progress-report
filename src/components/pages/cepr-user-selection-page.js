@@ -1,3 +1,6 @@
+import '@brightspace-ui/core/components/button/button.js';
+import '@brightspace-ui/core/components/button/button-subtle.js';
+import '@brightspace-ui/core/components/button/floating-buttons.js';
 import '@brightspace-ui/core/components/inputs/input-checkbox.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
@@ -108,6 +111,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			<h1 class="d2l-heading-1">${this.localize('toolTitle')}</h1>
 			${this.localize('toolDescription')}
 			${ this.isLoading ? this._renderSpinner() : this._renderUsers() }
+			${this._renderFloatingButtons()}
 		`;
 	}
 
@@ -149,6 +153,17 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 		this.users = await UserService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
 		this.isQuerying = false;
+	}
+
+	_renderFloatingButtons() {
+		return html`
+			<d2l-floating-buttons>
+				<d2l-button primary>Select Feedback</d2l-button>
+				<d2l-button-subtle
+					text="${this.selectedUsers.size} Students Selected"
+				></d2l-button-subtle>
+			</d2l-floating-buttons>
+		`;
 	}
 
 	_renderSpinner() {
