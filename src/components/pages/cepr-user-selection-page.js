@@ -160,7 +160,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			<d2l-floating-buttons>
 				<d2l-button primary>Select Feedback</d2l-button>
 				<d2l-button-subtle
-					text="${this.selectedUsers.size} Students Selected"
+					text="${this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.size })}"
 				></d2l-button-subtle>
 			</d2l-floating-buttons>
 		`;
