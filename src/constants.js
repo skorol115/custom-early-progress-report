@@ -5,3 +5,11 @@ export const SortableColumn = {
 	SectionName: 3,
 	LastCourseHomepageAccess: 4
 };
+
+export const SortableColumnLookup = {
+	0: 'LastName',
+	1: 'FirstName',
+	2: 'OrgDefinedId',
+	3: 'SectionName',
+	4: 'LastCourseHomepageAccess'
+};

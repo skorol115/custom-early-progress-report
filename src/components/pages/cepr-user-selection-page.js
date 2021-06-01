@@ -11,7 +11,7 @@ import { heading1Styles  } from '@brightspace-ui/core/components/typography/styl
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 import { SortableColumn } from '../../constants';
 import { tableStyles } from '@brightspace-ui/core/components/table/table-wrapper.js';
-import { UserService } from '../../services/user-service';
+import { UserServiceFactory } from '../../services/user-service-factory';
 
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
@@ -88,6 +88,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	constructor() {
 		super();
+
+		this.userService = UserServiceFactory.getUserService();
+
 		this.pageNumber = 1;
 		this.pageSize = 25;
 		this.sortField = SortableColumn.LastName;
@@ -149,13 +152,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await UserService.getNumUsers(this.orgUnitId);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await UserService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
+		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
 		this.isQuerying = false;
 	}
 
