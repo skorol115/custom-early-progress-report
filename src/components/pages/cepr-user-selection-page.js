@@ -6,6 +6,7 @@ import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
 import '@brightspace-ui/core/components/table/table-col-sort-button.js'
 import { css, html, LitElement } from 'lit-element/lit-element.js';
+import { getDateFromISODateTime } from '@brightspace-ui/core/helpers/dateTime.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 import { SortableColumn } from '../../constants';
@@ -76,6 +77,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 				d2l-table-wrapper {
 					margin-top: 30px;
+				}
+
+				.d2l-table-cell-first {
+					width: 24px;
 				}
 			`
 		];
@@ -181,6 +186,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_renderUser(user) {
+		const lastAccessedDate = user.LastCourseHomepageAccess ? getDateFromISODateTime(user.LastCourseHomepageAccess).toLocaleString() : null;
 		return html`
 			<tr ?selected=${this.selectedUsers.has(user.UserId)}>
 				<td>
@@ -193,14 +199,14 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				<td>${user.LastName}, ${user.FirstName}</td>
 				<td>${user.OrgDefinedId}</td>
 				<td>${user.SectionName}</td>
-				<td>${user.LastCourseHomepageAccess}</td>
+				<td>${lastAccessedDate}</td>
 			</tr>
 		`;
 	}
 
 	_renderUsers() {
 		return html`
-			<d2l-table-wrapper>
+			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
 					<thead>
 						<th>
