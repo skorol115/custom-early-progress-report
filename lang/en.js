@@ -6,7 +6,7 @@ export default {
 	"lastNameTableHeader": "Last Name",
 	"firstNameTableHeader": "First Name",
 	"sectionNameTableHeader": "Section Name",
-	"orgTableHeader": "OrgDefinedId",
+	"orgTableHeader": "Org Defined ID",
 	"lastAccessedTableHeader": "Last Course Access",
 	"numberOfSelectedStudents": "{selectedStudentsCount} Students Selected"
 };

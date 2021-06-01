@@ -43,7 +43,6 @@
   "dependencies": {
     "@brightspace-ui-labs/pagination": "^1.0.5",
     "@brightspace-ui/core": "^1",
-    "d2l-table": "github:BrightspaceUI/table#semver:^2",
     "lit-element": "^2"
   },
   "version": "1.2.1"
