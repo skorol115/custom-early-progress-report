@@ -13,5 +13,6 @@ export default {
 	"nextButton": "Next",
 	"restartButton": "Restart",
 	"selectFeedbackButton": "Select Feedback",
-	"cancelButton": "Cancel"
+	"cancelButton": "Cancel",
+	"importCsvButton": "Bulk CSV Import"
 };

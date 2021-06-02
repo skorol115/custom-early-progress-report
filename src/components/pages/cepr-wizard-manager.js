@@ -15,6 +15,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			orgUnitId: {
 				type: String
+			},
+			importCsvUrl: {
+				type: String
 			}
 		};
 	}
@@ -86,11 +89,24 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderImportCsvButton() {
+		if (!this.importCsvUrl) return html``;
+
+		return html`
+			<d2l-button-subtle
+				text="${this.localize('importCsvButton')}"
+				icon="tier1:import"
+				@click="${() => window.open(this.importCsvUrl)}"
+			></d2l-button-subtle>
+		`;
+	}
+
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
 					<h2> Select Grade Items </h2>
+					${this._renderImportCsvButton()}
 				</d2l-labs-step>
 
 				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">
