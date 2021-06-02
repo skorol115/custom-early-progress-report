@@ -16,6 +16,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			orgUnitId: {
 				type: String
+			},
+			gradeItemQueries: {
+				type: Array
 			}
 		};
 	}
@@ -23,6 +26,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	constructor() {
 		super();
 		this.currentStep = 0;
+		this.gradeItemQueries = [];
 	}
 
 	render() {
@@ -35,6 +39,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	updated() {
 		this.wizard = this.shadowRoot.getElementById('wizard');
+	}
+
+	_gradeItemQueryChange(e) {
+		this.gradeItemQueries = e.detail.gradeItemQueries;
 	}
 
 	_handleNext() {
@@ -53,14 +61,15 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			<d2l-floating-buttons>
 				<d2l-button
 					primary
-					@click="${ this._handleNext }">
+					@click="${ this._handleNext }"
+					?disabled=${this.gradeItemQueries.length === 0}>
 					${ this.localize('nextButton') }
 				</d2l-button>
 				<d2l-button>
 					${ this.localize('cancelButton') }
 				</d2l-button>
 				<d2l-button-subtle
-					text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: 0 }) }"
+					text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: this.gradeItemQueries.length }) }"
 				></d2l-button-subtle>
 			</d2l-floating-buttons>
 			`
@@ -92,7 +101,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
 					<h2> Select Grade Items </h2>
-					<cepr-grade-item-selection-page></cepr-grade-item-selection-page>
+					<cepr-grade-item-selection-page
+						@change=${this._gradeItemQueryChange}>
+					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
 
 				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">

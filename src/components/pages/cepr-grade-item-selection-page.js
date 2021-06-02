@@ -2,6 +2,7 @@ import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
 import '@brightspace-ui/core/components/inputs/input-checkbox.js';
+import '@brightspace-ui/core/components/inputs/input-percent.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
 import '@brightspace-ui/core/components/table/table-col-sort-button.js';
@@ -15,16 +16,19 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
 			gradeItems: {
-				type: Array
+				type: Map
+			},
+			gradeItemHash: {
+				type: Map
+			},
+			gradeItemSelection: {
+				type: Set
 			},
 			isLoading: {
 				type: Boolean
 			},
 			isQuerying: {
 				type: Boolean
-			},
-			selectedGradeItems: {
-				type: Set
 			},
 			orgUnitId: {
 				type: String
@@ -62,6 +66,10 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				.d2l-table-cell-first {
 					width: 24px;
 				}
+
+				.grade-item-range-column {
+					width: 5.5rem;
+				}
 			`
 		];
 	}
@@ -71,8 +79,13 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		this.gradeItemService = GradeItemServiceFactory.getGradeItemService();
 
-		this.gradeItems = [];
-		this.selectedGradeItems = new Set();
+		this.gradeItems = new Map();
+
+		// A hashmap for holding grade item state, which will be maintained through subsequent Grade Item queries
+		this.gradeItemHash = new Map();
+
+		this.gradeItemSelection = new Set();
+
 		this.isLoading = true;
 		this.isQuerying = false;
 	}
@@ -90,28 +103,84 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	render() {
 		return html`
 			${ this.isLoading ? this._renderSpinner() : this._renderGradeItems() }
-		`;
+			`;
+	}
+
+	_dispatchOnChange() {
+
+		// Compile selected grade items & ranges into a gradeItemQueries array
+		const gradeItemQueries = [];
+		this.gradeItemSelection.forEach(gradeItemId => {
+			const gradeItem = this.gradeItemHash.get(gradeItemId);
+			gradeItemQueries.push({
+				GradeItemId: gradeItemId,
+				LowerBounds: gradeItem.LowerBounds,
+				UpperBounds: gradeItem.UpperBounds
+			});
+		});
+
+		// Dispatch change event to wizard wrapper
+		const event = new CustomEvent('change', {
+			detail: {
+				gradeItemQueries: gradeItemQueries
+			}
+		});
+		this.dispatchEvent(event);
 	}
 
 	async _queryGradeItems() {
 		this.isQuerying = true;
-		this.gradeItems = await this.gradeItemService.getGradeItems(this.orgUnitId);
+
+		const gradeItemsList = await this.gradeItemService.getGradeItems(this.orgUnitId);
+		this.gradeItems.clear();
+		gradeItemsList.forEach(gradeItem => {
+			const gradeItemId = gradeItem.GradeItemId;
+			this.gradeItems.set(gradeItemId, gradeItem);
+			if (!this.gradeItemHash.has(gradeItemId)) {
+				this.gradeItemHash.set(gradeItemId, {
+					GradeItemId: gradeItemId,
+					LowerBounds: null,
+					UpperBounds: null
+				});
+			}
+		});
+
 		this.isQuerying = false;
 	}
 
 	_renderGradeItem(gradeItem) {
 		return html`
-			<tr ?selected=${this.selectedGradeItems.has(gradeItem.GradeItemId)}>
+			<tr ?selected=${this.gradeItemSelection.has(gradeItem.GradeItemId)}>
 				<td>
 					<d2l-input-checkbox
-						@change=${this._selectGradeItem}
+						@change=${this._toggleGradeItemSelection}
 						id="${gradeItem.GradeItemId}"
-						?checked=${this.selectedGradeItems.has(gradeItem.GradeItemId)}
+						?checked=${this.gradeItemSelection.has(gradeItem.GradeItemId)}
 					></d2l-input-checkbox>
 				</td>
 				<td>${gradeItem.Name}</td>
-				<td>TODO - Lower Bounds input</td>
-				<td>TODO - Upper Bounds input</td>
+				<td class="grade-item-range-column">
+					<d2l-input-percent
+						input-width="100%"
+						label="${gradeItem.Name} ${this.localize('minGradeTableHeader')}"
+						label-hidden
+						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.LowerBounds}"
+						id=${gradeItem.GradeItemId}
+						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
+						@change=${this._setGradeItemLowerBounds}>
+					</d2l-input-percent>
+				</td>
+				<td class="grade-item-range-column">
+					<d2l-input-percent
+						input-width="100%"
+						label="${gradeItem.Name} ${this.localize('maxGradeTableHeader')}"
+						label-hidden
+						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.UpperBounds}"
+						id=${gradeItem.GradeItemId}
+						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
+						@change=${this._setGradeItemUpperBounds}>
+					</d2l-input-percent>
+				</td>
 			</tr>
 		`;
 	}
@@ -123,21 +192,21 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 					<thead>
 						<th>
 							<d2l-input-checkbox
-								?checked=${this.selectedGradeItems.size === this.gradeItems.length}
-								@change=${this._selectAllItemsEvent}
+							?checked=${this.gradeItemSelection.size === this.gradeItems.size}
+							@change=${this._selectAllItemsEvent}
 							></d2l-input-checkbox>
 						</th>
-						<th>${this.localize('TODO')}</th>
-						<th>${this.localize('TODO')}</th>
-						<th>${this.localize('TODO')}</th>
+						<th>${this.localize('gradeItemTableHeader')}</th>
+						<th>${this.localize('minGradeTableHeader')}</th>
+						<th>${this.localize('maxGradeTableHeader')}</th>
 					</thead>
 					<tbody>
-						${ this.isQuerying ? '' : this.gradeItems.map(gradeItem => this._renderGradeItem(gradeItem)) }
+						${ this.isQuerying ? '' : Array.from(this.gradeItems.values()).map(gradeItem => this._renderGradeItem(gradeItem)) }
 					</tbody>
 				</table>
 				${ this.isQuerying ? this._renderSpinner() : '' }
 			</d2l-table-wrapper>
-		`;
+			`;
 	}
 
 	_renderSpinner() {
@@ -151,23 +220,38 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
-		if (checkAllItems) {
-			this.gradeItems.forEach(gradeItem => this.selectedGradeItems.add(gradeItem.GradeItemId));
-		} else {
-			this.gradeItems.forEach(gradeItem => this.selectedGradeItems.delete(gradeItem.GradeItemId));
-		}
-		// need to re-render table with new selection updates
+		this.gradeItems.forEach(gradeItem => {
+			this._setGradeItemSelection(gradeItem.GradeItemId, checkAllItems);
+		});
+		this._dispatchOnChange();
 		this.requestUpdate();
 	}
 
-	_selectGradeItem(e) {
+	_setGradeItemLowerBounds(e) {
+		const gradeItemId = parseInt(e.target.id);
+		this.gradeItemHash.get(gradeItemId).LowerBounds = e.target.value;
+		this._dispatchOnChange();
+	}
+
+	_setGradeItemSelection(gradeItemId, selected) {
+		if (selected) {
+			this.gradeItemSelection.add(gradeItemId);
+		} else {
+			this.gradeItemSelection.delete(gradeItemId);
+		}
+	}
+
+	_setGradeItemUpperBounds(e) {
+		const gradeItemId = parseInt(e.target.id);
+		this.gradeItemHash.get(gradeItemId).UpperBounds = e.target.value;
+		this._dispatchOnChange();
+	}
+
+	_toggleGradeItemSelection(e) {
 		const gradeItemSelected = e.target.checked;
 		const gradeItemId = parseInt(e.target.id);
-		if (gradeItemSelected) {
-			this.selectedGradeItems.add(gradeItemId);
-		} else {
-			this.selectedGradeItems.delete(gradeItemId);
-		}
+		this._setGradeItemSelection(gradeItemId, gradeItemSelected);
+		this._dispatchOnChange();
 		this.requestUpdate();
 	}
 }

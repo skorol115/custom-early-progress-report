@@ -23,7 +23,7 @@ export class GradeItemServiceDemo {
 	];
 
 	static async getGradeItems() {
-		await sleep(2000);
+		await sleep(100);
 		return this.gradeItems;
 	}
 }
