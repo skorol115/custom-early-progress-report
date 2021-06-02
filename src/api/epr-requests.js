@@ -3,6 +3,10 @@ import { Routes } from './routes';
 export class EprRequests {
 
 	// API Routes
+	static async getGradeItems(orgUnitId) {
+		return await this._get(Routes.GradeItems(orgUnitId));
+	}
+
 	static async getNumUsers(orgUnitId) {
 		return await this._get(Routes.NumUsers(orgUnitId));
 	}
