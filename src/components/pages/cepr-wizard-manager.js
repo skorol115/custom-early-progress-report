@@ -55,23 +55,24 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					@click="${ this._handleNext }">
 					${ this.localize('nextButton') }
 				</d2l-button>
-				<d2l-button-subtle>
+				<d2l-button>
 					${ this.localize('cancelButton') }
-				</d2l-button-subtle>
+				</d2l-button>
+				<d2l-button-subtle
+					text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: 0 }) }"
+				></d2l-button-subtle>
 			</d2l-floating-buttons>
 			`
 			: html`
 			<d2l-floating-buttons>
-				<d2l-button-subtle
-					@click="${ this._handleRestart }">
-					${ this.localize('restartButton') }
-				</d2l-button-subtle>
-
 				<d2l-button
 					primary>
 					${ this.localize('selectFeedbackButton') }
 				</d2l-button>
-
+				<d2l-button
+					@click="${ this._handleRestart }">
+					${ this.localize('restartButton') }
+				</d2l-button>
 				<d2l-button-subtle
 					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: 0 }) }"
 				></d2l-button-subtle>
@@ -94,6 +95,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">
 					<h2> User Selection Page </h2>
+					<cepr-user-selection-page></cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;

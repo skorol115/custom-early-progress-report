@@ -115,10 +115,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	render() {
 		return html`
-			<h1 class="d2l-heading-1">${this.localize('toolTitle')}</h1>
-			${this.localize('toolDescription')}
 			${ this.isLoading ? this._renderSpinner() : this._renderUsers() }
-			${this._renderFloatingButtons()}
 		`;
 	}
 
@@ -160,23 +157,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
 		this.isQuerying = false;
-	}
-
-	_renderFloatingButtons() {
-		return html`
-			<d2l-floating-buttons>
-				<d2l-button
-					primary
-					?disabled=${!this.selectedUsers.size}
-				>
-					Select Feedback
-				</d2l-button>
-				<d2l-button-subtle
-					text="${this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.size })}"
-					?disabled=${!this.selectedUsers.size}
-				></d2l-button-subtle>
-			</d2l-floating-buttons>
-		`;
 	}
 
 	_renderSpinner() {

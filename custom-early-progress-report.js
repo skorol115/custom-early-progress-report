@@ -1,6 +1,4 @@
-import './src/components/pages/cepr-user-selection-page';
 import './src/components/pages/cepr-wizard-manager';
-
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 
 class CustomEarlyProgressReport extends LitElement {
