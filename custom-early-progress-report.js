@@ -1,5 +1,4 @@
-import './src/components/pages/cepr-user-selection-page';
-
+import './src/components/pages/cepr-wizard-manager';
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 
 class CustomEarlyProgressReport extends LitElement {
@@ -24,9 +23,9 @@ class CustomEarlyProgressReport extends LitElement {
 
 	render() {
 		return html`
-			<cepr-user-selection-page
+			<cepr-wizard-manager
 				orgUnitId="${this.orgUnitId}"
-			></cepr-user-selection-page>
+			></cepr-wizard-manager>
 		`;
 	}
 }

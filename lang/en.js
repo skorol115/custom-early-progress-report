@@ -8,5 +8,10 @@ export default {
 	"sectionNameTableHeader": "Section Name",
 	"orgTableHeader": "Org Defined ID",
 	"lastAccessedTableHeader": "Last Course Access",
-	"numberOfSelectedStudents": "{selectedStudentsCount} Students Selected"
+	"numberOfSelectedStudents": "{selectedStudentsCount} Students Selected",
+	"numberOfSelectedGradeItems": "{selectedGradeItemsCount} Grade Items Selected",
+	"nextButton": "Next",
+	"restartButton": "Restart",
+	"selectFeedbackButton": "Select Feedback",
+	"cancelButton": "Cancel"
 };
