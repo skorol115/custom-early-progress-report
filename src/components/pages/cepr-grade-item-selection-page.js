@@ -82,7 +82,6 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		this.isLoading = true;
 
-		await this._queryNumGradeItems();
 		await this._queryGradeItems();
 
 		this.isLoading = false;
@@ -96,26 +95,21 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _queryGradeItems() {
 		this.isQuerying = true;
-		this.users = await this.gradeItemService.getGradeItems(this.orgUnitId);
+		this.gradeItems = await this.gradeItemService.getGradeItems(this.orgUnitId);
 		this.isQuerying = false;
-	}
-
-	async _queryNumGradeItems() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId);
-		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 	}
 
 	_renderGradeItem(gradeItem) {
 		return html`
-			<tr ?selected=${this.selectedGradeItems.has(gradeItem.gradeItemId)}>
+			<tr ?selected=${this.selectedGradeItems.has(gradeItem.GradeItemId)}>
 				<td>
 					<d2l-input-checkbox
 						@change=${this._selectGradeItem}
-						id="${gradeItem.gradeItemId}"
-						?checked=${this.selectedGradeItems.has(gradeItem.gradeItemId)}
+						id="${gradeItem.GradeItemId}"
+						?checked=${this.selectedGradeItems.has(gradeItem.GradeItemId)}
 					></d2l-input-checkbox>
 				</td>
-				<td>${gradeItem.name}</td>
+				<td>${gradeItem.Name}</td>
 				<td>TODO - Lower Bounds input</td>
 				<td>TODO - Upper Bounds input</td>
 			</tr>
@@ -158,9 +152,9 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
 		if (checkAllItems) {
-			this.gradeItems.forEach(gradeItem => this.selectedGradeItems.add(gradeItem.gradeItemId));
+			this.gradeItems.forEach(gradeItem => this.selectedGradeItems.add(gradeItem.GradeItemId));
 		} else {
-			this.gradeItems.forEach(gradeItem => this.selectedGradeItems.delete(gradeItem.gradeItemId));
+			this.gradeItems.forEach(gradeItem => this.selectedGradeItems.delete(gradeItem.GradeItemId));
 		}
 		// need to re-render table with new selection updates
 		this.requestUpdate();
@@ -168,7 +162,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectGradeItem(e) {
 		const gradeItemSelected = e.target.checked;
-		const gradeItemId = parseInt(e.target.gradeItemId);
+		const gradeItemId = parseInt(e.target.id);
 		if (gradeItemSelected) {
 			this.selectedGradeItems.add(gradeItemId);
 		} else {

@@ -4,6 +4,7 @@ import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
 import './cepr-user-selection-page.js';
+import './cepr-grade-item-selection-page';
 import { html, LitElement } from 'lit-element/lit-element';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 
@@ -91,6 +92,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
 					<h2> Select Grade Items </h2>
+					<cepr-grade-item-selection-page></cepr-grade-item-selection-page>
 				</d2l-labs-step>
 
 				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">
