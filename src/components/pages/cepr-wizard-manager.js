@@ -49,6 +49,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.currentStep = this.wizard.currentStep();
 	}
 
+	_openImportCsvLink() {
+		window.open(this.importCsvUrl);
+	}
+
 	_renderFloatingButtons() {
 		return this.currentStep === 0 ?
 			html`
@@ -96,7 +100,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			<d2l-button-subtle
 				text="${this.localize('importCsvButton')}"
 				icon="tier1:import"
-				@click="${() => window.open(this.importCsvUrl)}"
+				@click="${this._openImportCsvLink}"
 			></d2l-button-subtle>
 		`;
 	}
