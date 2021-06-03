@@ -27,6 +27,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			hideNoUsersAlert: {
 				type: Boolean
+			},
+			importCsvUrl: {
+				type: String
 			}
 		};
 	}
@@ -86,6 +89,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.currentStep = this.wizard.currentStep();
 	}
 
+	_openImportCsvLink() {
+		window.open(this.importCsvUrl);
+	}
+
 	_renderFloatingButtons() {
 		return this.currentStep === 0 ?
 			html`
@@ -130,11 +137,24 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderImportCsvButton() {
+		if (!this.importCsvUrl) return html``;
+
+		return html`
+			<d2l-button-subtle
+				text="${this.localize('importCsvButton')}"
+				icon="tier1:import"
+				@click="${this._openImportCsvLink}"
+			></d2l-button-subtle>
+		`;
+	}
+
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
 					<h2> Select Grade Items </h2>
+					${this._renderImportCsvButton()}
 					<cepr-grade-item-selection-page
 						orgUnitId=${this.orgUnitId}
 						@change=${this._gradeItemQueryChange}>

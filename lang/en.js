@@ -17,5 +17,6 @@ export default {
 	"gradeItemTableHeader": "Grade Item",
 	"minGradeTableHeader": "Minimum Grade",
 	"maxGradeTableHeader": "Maximum Grade",
-	"noUsersAlert": "There are no users with grades in the selected ranges."
+	"noUsersAlert": "There are no users with grades in the selected ranges.",
+	"importCsvButton": "Bulk CSV Import"
 };

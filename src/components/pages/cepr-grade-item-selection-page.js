@@ -60,7 +60,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				}
 
 				d2l-table-wrapper {
-					margin-top: 30px;
+					margin-top: 0.5rem;
 				}
 
 				.d2l-table-cell-first {
