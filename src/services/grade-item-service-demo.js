@@ -6,6 +6,11 @@ export class GradeItemServiceDemo {
 
 	static gradeItems = [
 		{
+			GradeItemId: 3,
+			Name: 'Third Grade Item',
+			IsHidden: true
+		},
+		{
 			GradeItemId: 1,
 			Name: 'First Grade Item',
 			IsHidden: false
@@ -14,11 +19,6 @@ export class GradeItemServiceDemo {
 			GradeItemId: 2,
 			Name: 'Second Grade Item',
 			IsHidden: false
-		},
-		{
-			GradeItemId: 3,
-			Name: 'Third Grade Item',
-			IsHidden: true
 		}
 	];
 

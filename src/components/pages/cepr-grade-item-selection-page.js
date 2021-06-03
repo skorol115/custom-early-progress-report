@@ -1,6 +1,7 @@
 import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
+import '@brightspace-ui/core/components/icons/icon.js';
 import '@brightspace-ui/core/components/inputs/input-checkbox.js';
 import '@brightspace-ui/core/components/inputs/input-percent.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
@@ -70,6 +71,10 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				.grade-item-range-column {
 					width: 5.5rem;
 				}
+
+				.is-hidden-icon {
+					margin: 0 0.75rem;
+				}
 			`
 		];
 	}
@@ -79,7 +84,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		this.gradeItemService = GradeItemServiceFactory.getGradeItemService();
 
-		this.gradeItems = new Map();
+		this.gradeItemList = [];
 
 		// A hashmap for holding grade item state, which will be maintained through subsequent Grade Item queries
 		this.gradeItemHash = new Map();
@@ -120,6 +125,22 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				gradeItemInvalid = true;
 			}
 
+			if (gradeItem.LowerBounds > gradeItem.UpperBounds) {
+
+				// Set the validation state of the inner text inputs
+				const errorMsg = this.localize('minMaxGradeError');
+				this._setPercentInputInvalidState(`#lower_${gradeItemId}`, true, errorMsg);
+				this._setPercentInputInvalidState(`#upper_${gradeItemId}`, true, errorMsg);
+				gradeItemInvalid = true;
+
+			} else {
+
+				// Clear any existing invalid states
+				this._setPercentInputInvalidState(`#lower_${gradeItemId}`, false);
+				this._setPercentInputInvalidState(`#upper_${gradeItemId}`, false);
+
+			}
+
 			gradeItemQueries.push({
 				GradeItemId: gradeItemId,
 				LowerBounds: gradeItem.LowerBounds,
@@ -135,22 +156,38 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 			}
 		});
 		this.dispatchEvent(event);
+		this.requestUpdate();
 	}
 
 	async _queryGradeItems() {
 		this.isQuerying = true;
 
-		const gradeItemsList = await this.gradeItemService.getGradeItems(this.orgUnitId);
-		this.gradeItems.clear();
-		gradeItemsList.forEach(gradeItem => {
+		const gradeItems = await this.gradeItemService.getGradeItems(this.orgUnitId);
+
+		// Build a list of grade items to render, and a hash of query data to reference in constant time
+		this.gradeItemList = [];
+		gradeItems.forEach(gradeItem => {
 			const gradeItemId = gradeItem.GradeItemId;
-			this.gradeItems.set(gradeItemId, gradeItem);
+			this.gradeItemList.push(gradeItem);
 			if (!this.gradeItemHash.has(gradeItemId)) {
 				this.gradeItemHash.set(gradeItemId, {
 					GradeItemId: gradeItemId,
 					LowerBounds: 0,
 					UpperBounds: 100
 				});
+			}
+		});
+
+		// Sort grade items alphabetically
+		this.gradeItemList = this.gradeItemList.sort((a, b) => {
+			const nameA = a.Name.toUpperCase();
+			const nameB = b.Name.toUpperCase();
+			if (nameA < nameB) {
+				return -1;
+			} else if (nameA > nameB) {
+				return 1;
+			} else {
+				return 0;
 			}
 		});
 
@@ -167,14 +204,18 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						?checked=${this.gradeItemSelection.has(gradeItem.GradeItemId)}
 					></d2l-input-checkbox>
 				</td>
-				<td>${gradeItem.Name}</td>
+				<td>
+					${gradeItem.Name}
+					${gradeItem.IsHidden ? this._renderHiddenIcon() : null}
+				</td>
 				<td class="grade-item-range-column">
 					<d2l-input-percent
 						input-width="100%"
 						label="${gradeItem.Name} ${this.localize('minGradeTableHeader')}"
 						label-hidden
 						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.LowerBounds}"
-						id=${gradeItem.GradeItemId}
+						id="lower_${gradeItem.GradeItemId}"
+						gradeItemId=${gradeItem.GradeItemId}
 						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
 						@change=${this._setGradeItemLowerBounds}
 						required>
@@ -186,7 +227,8 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						label="${gradeItem.Name} ${this.localize('maxGradeTableHeader')}"
 						label-hidden
 						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.UpperBounds}"
-						id=${gradeItem.GradeItemId}
+						id="upper_${gradeItem.GradeItemId}"
+						gradeItemId=${gradeItem.GradeItemId}
 						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
 						@change=${this._setGradeItemUpperBounds}
 						required>
@@ -203,7 +245,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 					<thead>
 						<th>
 							<d2l-input-checkbox
-							?checked=${this.gradeItemSelection.size === this.gradeItems.size}
+							?checked=${this.gradeItemSelection.size === this.gradeItemList.length}
 							@change=${this._selectAllItemsEvent}
 							></d2l-input-checkbox>
 						</th>
@@ -212,12 +254,18 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						<th>${this.localize('maxGradeTableHeader')}</th>
 					</thead>
 					<tbody>
-						${ this.isQuerying ? '' : Array.from(this.gradeItems.values()).map(gradeItem => this._renderGradeItem(gradeItem)) }
+						${ this.isQuerying ? '' : this.gradeItemList.map(gradeItem => this._renderGradeItem(gradeItem)) }
 					</tbody>
 				</table>
 				${ this.isQuerying ? this._renderSpinner() : '' }
 			</d2l-table-wrapper>
 			`;
+	}
+
+	_renderHiddenIcon() {
+		return html`
+			<d2l-icon class="is-hidden-icon" icon="tier1:visibility-hide" title="${this.localize('hiddenIconTooltip')}"></d2l-icon>
+		`;
 	}
 
 	_renderSpinner() {
@@ -231,15 +279,14 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
-		this.gradeItems.forEach(gradeItem => {
+		this.gradeItemList.forEach(gradeItem => {
 			this._setGradeItemSelection(gradeItem.GradeItemId, checkAllItems);
 		});
 		this._dispatchOnChange();
-		this.requestUpdate();
 	}
 
 	_setGradeItemLowerBounds(e) {
-		const gradeItemId = parseInt(e.target.id);
+		const gradeItemId = parseInt(e.target.getAttribute('gradeItemId'));
 		this.gradeItemHash.get(gradeItemId).LowerBounds = e.target.value;
 		this._dispatchOnChange();
 	}
@@ -253,9 +300,25 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_setGradeItemUpperBounds(e) {
-		const gradeItemId = parseInt(e.target.id);
+		const gradeItemId = parseInt(e.target.getAttribute('gradeItemId'));
 		this.gradeItemHash.get(gradeItemId).UpperBounds = e.target.value;
 		this._dispatchOnChange();
+	}
+
+	_setPercentInputInvalidState(percentInputId, invalid, validationError = null) {
+
+		// NOTE: This is a hack, to get around the fact that d2l-input-percent doesn't expose custom validation hooks
+
+		// Red outline on d2l-input-percent element
+		const percentInput = this.shadowRoot.querySelector(percentInputId);
+		percentInput.invalid = invalid;
+
+		// Validation error message on inner d2l-input-text element
+		const innerTextInput =  percentInput?.shadowRoot.querySelector('d2l-input-number')?.shadowRoot.querySelector('d2l-input-text');
+		if (innerTextInput) {
+			innerTextInput.hideInvalidIcon = true;
+			innerTextInput.validationError = validationError;
+		}
 	}
 
 	_toggleGradeItemSelection(e) {
@@ -263,7 +326,6 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		const gradeItemId = parseInt(e.target.id);
 		this._setGradeItemSelection(gradeItemId, gradeItemSelected);
 		this._dispatchOnChange();
-		this.requestUpdate();
 	}
 }
 customElements.define('cepr-grade-item-selection-page', CeprGradeItemSelectionPage);
