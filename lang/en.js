@@ -16,5 +16,6 @@ export default {
 	"cancelButton": "Cancel",
 	"gradeItemTableHeader": "Grade Item",
 	"minGradeTableHeader": "Minimum Grade",
-	"maxGradeTableHeader": "Maximum Grade"
+	"maxGradeTableHeader": "Maximum Grade",
+	"noUsersAlert": "There are no users with grades in the selected ranges."
 };

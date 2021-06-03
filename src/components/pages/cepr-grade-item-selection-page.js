@@ -109,9 +109,17 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	_dispatchOnChange() {
 
 		// Compile selected grade items & ranges into a gradeItemQueries array
+		let gradeItemInvalid = false;
 		const gradeItemQueries = [];
 		this.gradeItemSelection.forEach(gradeItemId => {
 			const gradeItem = this.gradeItemHash.get(gradeItemId);
+
+			const invalidLowerBounds = gradeItem.LowerBounds === undefined || gradeItem.LowerBounds === null;
+			const invalidUpperBounds = gradeItem.UpperBounds === undefined || gradeItem.UpperBounds === null;
+			if (invalidLowerBounds || invalidUpperBounds) {
+				gradeItemInvalid = true;
+			}
+
 			gradeItemQueries.push({
 				GradeItemId: gradeItemId,
 				LowerBounds: gradeItem.LowerBounds,
@@ -122,6 +130,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		// Dispatch change event to wizard wrapper
 		const event = new CustomEvent('change', {
 			detail: {
+				gradeItemInvalid: gradeItemInvalid,
 				gradeItemQueries: gradeItemQueries
 			}
 		});
@@ -139,8 +148,8 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 			if (!this.gradeItemHash.has(gradeItemId)) {
 				this.gradeItemHash.set(gradeItemId, {
 					GradeItemId: gradeItemId,
-					LowerBounds: null,
-					UpperBounds: null
+					LowerBounds: 0,
+					UpperBounds: 100
 				});
 			}
 		});
@@ -167,7 +176,8 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.LowerBounds}"
 						id=${gradeItem.GradeItemId}
 						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
-						@change=${this._setGradeItemLowerBounds}>
+						@change=${this._setGradeItemLowerBounds}
+						required>
 					</d2l-input-percent>
 				</td>
 				<td class="grade-item-range-column">
@@ -178,7 +188,8 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.UpperBounds}"
 						id=${gradeItem.GradeItemId}
 						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
-						@change=${this._setGradeItemUpperBounds}>
+						@change=${this._setGradeItemUpperBounds}
+						required>
 					</d2l-input-percent>
 				</td>
 			</tr>
