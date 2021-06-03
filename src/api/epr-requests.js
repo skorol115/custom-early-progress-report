@@ -7,12 +7,12 @@ export class EprRequests {
 		return await this._get(Routes.GradeItems(orgUnitId));
 	}
 
-	static async getNumUsers(orgUnitId) {
-		return await this._get(Routes.NumUsers(orgUnitId));
+	static async getNumUsers(orgUnitId, gradeItemQueries) {
+		return await this._post(Routes.NumUsers(orgUnitId), JSON.stringify(gradeItemQueries));
 	}
 
-	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc) {
-		return await this._get(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc));
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries) {
+		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc), JSON.stringify(gradeItemQueries));
 	}
 
 	// Helper Methods

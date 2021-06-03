@@ -76,7 +76,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	async _handleStepOneNext() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		if (numUsers === 0) {
 			this.hideNoUsersAlert = false;
 			return;
