@@ -8,11 +8,11 @@ export class EprRequests {
 	}
 
 	static async getNumUsers(orgUnitId, gradeItemQueries) {
-		return await this._post(Routes.NumUsers(orgUnitId), JSON.stringify(gradeItemQueries));
+		return await this._post(Routes.NumUsers(orgUnitId), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
 	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries) {
-		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc), JSON.stringify(gradeItemQueries));
+		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
 	// Helper Methods
