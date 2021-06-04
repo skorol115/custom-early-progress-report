@@ -152,7 +152,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
-				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
+				<d2l-labs-step hide-restart-button="true" hide-next-button="true">
 					<h2> Select Grade Items </h2>
 					${this._renderImportCsvButton()}
 					<cepr-grade-item-selection-page
