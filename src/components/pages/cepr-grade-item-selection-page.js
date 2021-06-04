@@ -1,12 +1,7 @@
-import '@brightspace-ui/core/components/button/button.js';
-import '@brightspace-ui/core/components/button/button-subtle.js';
-import '@brightspace-ui/core/components/button/floating-buttons.js';
 import '@brightspace-ui/core/components/icons/icon.js';
 import '@brightspace-ui/core/components/inputs/input-checkbox.js';
 import '@brightspace-ui/core/components/inputs/input-percent.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
-import '@brightspace-ui-labs/pagination/pagination.js';
-import '@brightspace-ui/core/components/table/table-col-sort-button.js';
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { GradeItemServiceFactory } from '../../services/grade-item-service-factory';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
