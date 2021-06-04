@@ -313,11 +313,11 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		const percentInput = this.shadowRoot.querySelector(percentInputId);
 		percentInput.invalid = invalid;
 
-		// Validation error message on inner d2l-input-text element
-		const innerTextInput =  percentInput?.shadowRoot.querySelector('d2l-input-number')?.shadowRoot.querySelector('d2l-input-text');
-		if (innerTextInput) {
-			innerTextInput.hideInvalidIcon = true;
-			innerTextInput.validationError = validationError;
+		// Validation error message on inner d2l-input-number element
+		const innerNumberInput = percentInput?.shadowRoot.querySelector('d2l-input-number');
+		if (innerNumberInput) {
+			innerNumberInput.hideInvalidIcon = true;
+			innerNumberInput.validationError = validationError;
 		}
 	}
 
