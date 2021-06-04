@@ -68,11 +68,11 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 					width: 24px;
 				}
 
-				.grade-item-range-column {
+				.d2l-grade-item-range-column {
 					width: 5.5rem;
 				}
 
-				.is-hidden-icon {
+				.d2l-is-hidden-icon {
 					margin: 0 0.75rem;
 				}
 			`
@@ -208,7 +208,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 					${gradeItem.Name}
 					${gradeItem.IsHidden ? this._renderHiddenIcon() : null}
 				</td>
-				<td class="grade-item-range-column">
+				<td class="d2l-grade-item-range-column">
 					<d2l-input-percent
 						input-width="100%"
 						label="${gradeItem.Name} ${this.localize('minGradeTableHeader')}"
@@ -221,7 +221,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						required>
 					</d2l-input-percent>
 				</td>
-				<td class="grade-item-range-column">
+				<td class="d2l-grade-item-range-column">
 					<d2l-input-percent
 						input-width="100%"
 						label="${gradeItem.Name} ${this.localize('maxGradeTableHeader')}"
@@ -264,7 +264,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderHiddenIcon() {
 		return html`
-			<d2l-icon class="is-hidden-icon" icon="tier1:visibility-hide" title="${this.localize('hiddenIconTooltip')}"></d2l-icon>
+			<d2l-icon class="d2l-is-hidden-icon" icon="tier1:visibility-hide" title="${this.localize('hiddenIconTooltip')}"></d2l-icon>
 		`;
 	}
 
