@@ -14,5 +14,11 @@ export default {
 	"restartButton": "Restart",
 	"selectFeedbackButton": "Select Feedback",
 	"cancelButton": "Cancel",
+	"gradeItemTableHeader": "Grade Item",
+	"minGradeTableHeader": "Minimum Grade",
+	"maxGradeTableHeader": "Maximum Grade",
+	"noUsersAlert": "There are no users with grades in the selected ranges.",
+	"minMaxGradeError": "Maximum Grade must be higher than Minimum Grade.",
+	"hiddenIconTooltip": "Hidden",
 	"importCsvButton": "Bulk CSV Import"
 };
