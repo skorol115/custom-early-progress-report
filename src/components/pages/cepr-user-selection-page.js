@@ -48,6 +48,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			orgUnitId: {
 				type: String
+			},
+			gradeItems: {
+				type: Array
 			}
 		};
 	}
@@ -105,18 +108,32 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	async connectedCallback() {
 		super.connectedCallback();
 
-		this.isLoading = true;
-
-		await this._queryNumUsers();
-		await this._queryUsers();
-
-		this.isLoading = false;
+		this._getUserList();
 	}
 
 	render() {
 		return html`
 			${ this.isLoading ? this._renderSpinner() : this._renderUsers() }
 		`;
+	}
+
+	updated(changedProperties) {
+		super.updated(changedProperties);
+
+		if (changedProperties.has('gradeItems')) {
+			this._getUserList();
+		}
+
+		this.dispatchEvent(new CustomEvent('user-selection-change', {
+			bubbles: true
+		}));
+	}
+
+	async _getUserList() {
+		this.isLoading = true;
+		await this._queryNumUsers();
+		await this._queryUsers();
+		this.isLoading = false;
 	}
 
 	async _handleItemsPerPageChange(event) {
@@ -149,13 +166,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItems);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc);
+		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItems);
 		this.isQuerying = false;
 	}
 

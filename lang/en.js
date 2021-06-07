@@ -20,5 +20,7 @@ export default {
 	"noUsersAlert": "There are no users with grades in the selected ranges.",
 	"minMaxGradeError": "Maximum Grade must be higher than Minimum Grade.",
 	"hiddenIconTooltip": "Hidden",
+	"wizardStep1Header": "Select Grade Items",
+	"wizardStep2Header": "User Selection Page",
 	"importCsvButton": "Bulk CSV Import"
 };

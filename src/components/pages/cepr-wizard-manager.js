@@ -30,6 +30,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			importCsvUrl: {
 				type: String
+			},
+			selectedUsersCount: {
+				type: Number
 			}
 		};
 	}
@@ -53,6 +56,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemQueries = [];
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
+		this.selectedUsersCount = 0;
 	}
 
 	render() {
@@ -65,6 +69,11 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	updated() {
 		this.wizard = this.shadowRoot.getElementById('wizard');
+		this.ceprUserSelection = this.shadowRoot.getElementById('cepr-user-selection');
+	}
+
+	get _getGradeItems() {
+		return JSON.stringify(this.gradeItemQueries);
 	}
 
 	_gradeItemQueryChange(e) {
@@ -87,6 +96,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 		this.wizard.next();
 		this.currentStep = this.wizard.currentStep();
+	}
+
+	_handleUserSelectionChange() {
+		this.selectedUsersCount = this.ceprUserSelection.selectedUsers.size;
 	}
 
 	_openImportCsvLink() {
@@ -125,7 +138,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					${ this.localize('restartButton') }
 				</d2l-button>
 				<d2l-button-subtle
-					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: 0 }) }"
+					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsersCount }) }"
 				></d2l-button-subtle>
 			</d2l-floating-buttons>`;
 	}
@@ -153,7 +166,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
-					<h2> Select Grade Items </h2>
+					<h2> ${ this.localize('wizardStep1Header') } </h2>
 					${this._renderImportCsvButton()}
 					<cepr-grade-item-selection-page
 						title=""
@@ -163,9 +176,12 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 				</d2l-labs-step>
 
 				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">
-					<h2> User Selection Page </h2>
+					<h2> ${ this.localize('wizardStep2Header') } </h2>
 					<cepr-user-selection-page
-						orgUnitId=${this.orgUnitId}>
+						id="cepr-user-selection"
+						@user-selection-change="${ this._handleUserSelectionChange }"
+						orgUnitId=${ this.orgUnitId }
+						gradeItems="${ this._getGradeItems }">
 					</cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
