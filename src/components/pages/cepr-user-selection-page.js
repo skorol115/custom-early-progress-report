@@ -49,7 +49,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			orgUnitId: {
 				type: String
 			},
-			gradeItems: {
+			gradeItemQueries: {
 				type: Array
 			}
 		};
@@ -120,13 +120,20 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	updated(changedProperties) {
 		super.updated(changedProperties);
 
-		if (changedProperties.has('gradeItems')) {
+		if (changedProperties.has('gradeItemQueries')) {
 			this._getUserList();
 		}
+	}
 
-		this.dispatchEvent(new CustomEvent('user-selection-change', {
-			bubbles: true
-		}));
+	_dispatchOnChange() {
+		// Dispatch change event to wizard wrapper
+		const event = new CustomEvent('change', {
+			detail: {
+				selectedUsers: this.selectedUsers.size
+			}
+		});
+		this.dispatchEvent(event);
+		this.requestUpdate();
 	}
 
 	async _getUserList() {
@@ -166,13 +173,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItems);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItems);
+		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries);
 		this.isQuerying = false;
 	}
 
@@ -211,7 +218,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					<thead>
 						<th>
 							<d2l-input-checkbox
-								?checked=${this.selectAll}
+								?checked=${this.selectedUsers.size === this.users.length}
 								@change=${this._selectAllItemsEvent}
 							></d2l-input-checkbox>
 						</th>
@@ -285,25 +292,26 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
-		this.selectAll = checkAllItems;
-		if (checkAllItems) {
-			this.users.forEach(user => this.selectedUsers.add(user.UserId));
-		} else {
-			this.users.forEach(user => this.selectedUsers.delete(user.UserId));
-		}
-		// need to re-render table with new selection updates
-		this.requestUpdate();
+		this.users.forEach(user => {
+			this._setUserSelection(user.UserId, checkAllItems);
+		});
+		this._dispatchOnChange();
 	}
 
 	_selectUser(e) {
 		const userSelected = e.target.checked;
 		const userId = parseInt(e.target.id);
-		if (userSelected) {
+		this._setUserSelection(userId, userSelected);
+		this._dispatchOnChange();
+	}
+
+	_setUserSelection(userId, selected) {
+		if (selected) {
 			this.selectedUsers.add(userId);
 		} else {
 			this.selectedUsers.delete(userId);
 		}
-		this.requestUpdate();
 	}
+
 }
 customElements.define('cepr-user-selection-page', CeprUserSelectionPage);

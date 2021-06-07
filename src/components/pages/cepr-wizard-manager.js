@@ -69,7 +69,6 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	updated() {
 		this.wizard = this.shadowRoot.getElementById('wizard');
-		this.ceprUserSelection = this.shadowRoot.getElementById('cepr-user-selection');
 	}
 
 	get _getGradeItems() {
@@ -96,10 +95,6 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 		this.wizard.next();
 		this.currentStep = this.wizard.currentStep();
-	}
-
-	_handleUserSelectionChange() {
-		this.selectedUsersCount = this.ceprUserSelection.selectedUsers.size;
 	}
 
 	_openImportCsvLink() {
@@ -165,7 +160,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
-				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
+				<d2l-labs-step title=${ this.localize('wizardStep1Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep1Header') } </h2>
 					${this._renderImportCsvButton()}
 					<cepr-grade-item-selection-page
@@ -175,17 +170,22 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
 
-				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">
+				<d2l-labs-step title=${ this.localize('wizardStep2Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep2Header') } </h2>
 					<cepr-user-selection-page
 						id="cepr-user-selection"
-						@user-selection-change="${ this._handleUserSelectionChange }"
+						@change="${ this._userSelectionChange }"
 						orgUnitId=${ this.orgUnitId }
-						gradeItems="${ this._getGradeItems }">
+						gradeItemQueries="${ this._getGradeItems }">
 					</cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;
 	}
+
+	_userSelectionChange(e) {
+		this.selectedUsersCount = e.detail.selectedUsers;
+	}
+
 }
 customElements.define('cepr-wizard-manager', CeprWizardManager);
