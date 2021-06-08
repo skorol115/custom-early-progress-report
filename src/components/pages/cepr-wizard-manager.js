@@ -30,6 +30,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			importCsvUrl: {
 				type: String
+			},
+			selectedUsersCount: {
+				type: Number
 			}
 		};
 	}
@@ -53,6 +56,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemQueries = [];
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
+		this.selectedUsersCount = 0;
 	}
 
 	render() {
@@ -65,6 +69,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	updated() {
 		this.wizard = this.shadowRoot.getElementById('wizard');
+	}
+
+	get _getGradeItems() {
+		return JSON.stringify(this.gradeItemQueries);
 	}
 
 	_gradeItemQueryChange(e) {
@@ -125,7 +133,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					${ this.localize('restartButton') }
 				</d2l-button>
 				<d2l-button-subtle
-					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: 0 }) }"
+					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsersCount }) }"
 				></d2l-button-subtle>
 			</d2l-floating-buttons>`;
 	}
@@ -152,8 +160,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
-				<d2l-labs-step title="Select Grade Items" hide-restart-button="true" hide-next-button="true">
-					<h2> Select Grade Items </h2>
+				<d2l-labs-step title=${ this.localize('wizardStep1Title') }  hide-restart-button="true" hide-next-button="true">
+					<h2> ${ this.localize('wizardStep1Header') } </h2>
 					${this._renderImportCsvButton()}
 					<cepr-grade-item-selection-page
 						title=""
@@ -162,14 +170,22 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
 
-				<d2l-labs-step title="Select Users" hide-restart-button="true" hide-next-button="true">
-					<h2> User Selection Page </h2>
+				<d2l-labs-step title=${ this.localize('wizardStep2Title') }  hide-restart-button="true" hide-next-button="true">
+					<h2> ${ this.localize('wizardStep2Header') } </h2>
 					<cepr-user-selection-page
-						orgUnitId=${this.orgUnitId}>
+						id="cepr-user-selection"
+						@change="${ this._userSelectionChange }"
+						orgUnitId=${ this.orgUnitId }
+						gradeItemQueries="${ this._getGradeItems }">
 					</cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;
 	}
+
+	_userSelectionChange(e) {
+		this.selectedUsersCount = e.detail.selectedUsers;
+	}
+
 }
 customElements.define('cepr-wizard-manager', CeprWizardManager);
