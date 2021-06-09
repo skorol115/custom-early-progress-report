@@ -1,11 +1,6 @@
 import { EprRequests } from '../api/epr-requests';
 
 export class UserService {
-	static async getAllUsers(orgUnitId, gradeItemQueries = []) {
-		const allUsers = await EprRequests.getAllUsers(orgUnitId, gradeItemQueries);
-		return allUsers;
-	}
-
 	static async getNumUsers(orgUnitId, gradeItemQueries = []) {
 		const numUsers = await EprRequests.getNumUsers(orgUnitId, gradeItemQueries);
 		return numUsers;
