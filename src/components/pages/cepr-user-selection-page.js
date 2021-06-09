@@ -207,6 +207,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	async _queryNumUsers() {
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
+		this.pageNumber = 1;
 	}
 
 	async _queryUsers() {
