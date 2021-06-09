@@ -7,6 +7,9 @@ class CustomEarlyProgressReport extends LitElement {
 			orgUnitId: {
 				type: String
 			},
+			historyEndpoint: {
+				type: String
+			},
 			importCsvUrl: {
 				type: String
 			}
@@ -29,6 +32,7 @@ class CustomEarlyProgressReport extends LitElement {
 			<cepr-wizard-manager
 				orgUnitId="${this.orgUnitId}"
 				importCsvUrl="${this.importCsvUrl}"
+				previousReportsURL="${this.historyEndpoint}"
 			></cepr-wizard-manager>
 		`;
 	}
