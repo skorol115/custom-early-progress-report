@@ -51,6 +51,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			gradeItemQueries: {
 				type: Array
+			},
+			allUsers: {
+				type: Array
 			}
 		};
 	}
@@ -103,11 +106,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.selectAll = false;
 		this.isLoading = true;
 		this.isQuerying = false;
+		this.allUsers = [];
 	}
 
 	async connectedCallback() {
 		super.connectedCallback();
-
+		console.log("connectedCallback");
 		this._getUserList();
 	}
 
@@ -121,8 +125,29 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		super.updated(changedProperties);
 
 		if (changedProperties.has('gradeItemQueries')) {
+			console.log("updated");
 			this._getUserList();
 		}
+	}
+
+	_toggleSellectAll() {
+		const checkAll = this.selectedUsers.size !== this.allUsers.length;
+
+		this.allUsers.forEach(user => {
+			this._setUserSelection(user.UserId, checkAll);
+		});
+		
+		this._dispatchOnChange();
+	}
+
+	_defaultSellectAll() {
+		this.selectedUsers = new Set();
+	
+		this.allUsers.forEach(item => {
+			this._setUserSelection(item.UserId, true);
+		});
+
+		this._dispatchOnChange();
 	}
 
 	_dispatchOnChange() {
@@ -138,8 +163,11 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _getUserList() {
 		this.isLoading = true;
+
 		await this._queryNumUsers();
 		await this._queryUsers();
+		await this._queryAllUsers();
+		this._defaultSellectAll();
 		this.isLoading = false;
 	}
 
@@ -172,6 +200,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this._queryUsers();
 	}
 
+	async _queryAllUsers() {
+		this.isQuerying = true;
+		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries);
+		this.isQuerying = false;
+	}
+
 	async _queryNumUsers() {
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
@@ -189,6 +223,20 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				class="d2l-spinner"
 				size=100>
 			</d2l-loading-spinner>
+		`;
+	}
+
+	_renderSelectAllButton() {
+		const buttonText = this.selectedUsers.size !== this.allUsers.length ?
+			this.localize('SelectAllButton', { selectedStudentCount: this.allUsers.length })
+			: this.localize('DeselectAllButton', { selectedStudentCount: this.allUsers.length });
+
+		return html`
+			<d2l-button-subtle
+				text="${buttonText}"
+				icon="tier1:check-circle"
+				@click="${this._toggleSellectAll}"
+			></d2l-button-subtle>
 		`;
 	}
 
@@ -213,6 +261,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderUsers() {
 		return html`
+			${this._renderSelectAllButton()}
 			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
 					<thead>
@@ -312,6 +361,5 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			this.selectedUsers.delete(userId);
 		}
 	}
-
 }
 customElements.define('cepr-user-selection-page', CeprUserSelectionPage);
