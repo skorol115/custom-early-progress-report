@@ -51,6 +51,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			gradeItemQueries: {
 				type: Array
+			},
+			allUsers: {
+				type: Array
 			}
 		};
 	}
@@ -103,6 +106,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.selectAll = false;
 		this.isLoading = true;
 		this.isQuerying = false;
+		this.allUsers = [];
 	}
 
 	async connectedCallback() {
@@ -125,6 +129,16 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		}
 	}
 
+	_defaultSellectAll() {
+		this.selectedUsers = new Set();
+
+		this.allUsers.forEach(item => {
+			this._setUserSelection(item.UserId, true);
+		});
+
+		this._dispatchOnChange();
+	}
+
 	_dispatchOnChange() {
 		// Dispatch change event to wizard wrapper
 		const event = new CustomEvent('change', {
@@ -140,6 +154,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isLoading = true;
 		await this._queryNumUsers();
 		await this._queryUsers();
+		await this._queryAllUsers();
+		this._defaultSellectAll();
 		this.isLoading = false;
 	}
 
@@ -157,6 +173,16 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		await this._queryUsers();
 	}
 
+	_handleSellectAllButton() {
+		const checkAll = this.selectedUsers.size !== this.allUsers.length;
+
+		this.allUsers.forEach(user => {
+			this._setUserSelection(user.UserId, checkAll);
+		});
+
+		this._dispatchOnChange();
+	}
+
 	_handleSort(e) {
 		const sortHeaderElement = e.target;
 		const selectedSortField = parseInt(sortHeaderElement.getAttribute('value'));
@@ -172,6 +198,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this._queryUsers();
 	}
 
+	async _queryAllUsers() {
+		this.isQuerying = true;
+		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries);
+		this.isQuerying = false;
+	}
+
 	async _queryNumUsers() {
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
@@ -181,6 +213,20 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries);
 		this.isQuerying = false;
+	}
+
+	_renderSelectAllButton() {
+		const buttonText = this.selectedUsers.size !== this.allUsers.length ?
+			this.localize('SelectAllButton', { selectedStudentCount: this.allUsers.length })
+			: this.localize('DeselectAllButton', { selectedStudentCount: this.allUsers.length });
+
+		return html`
+			<d2l-button-subtle
+				text="${buttonText}"
+				icon="tier1:check-circle"
+				@click="${this._handleSellectAllButton}"
+			></d2l-button-subtle>
+		`;
 	}
 
 	_renderSpinner() {
@@ -213,6 +259,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderUsers() {
 		return html`
+			${this._renderSelectAllButton()}
 			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
 					<thead>
