@@ -46,9 +46,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 				#no-users-alert {
 					margin-bottom: 0.75rem;
 				}
-				.action-bar {
-					display: flex;
+				.d2l-action-bar {
 					align-items: center;
+					display: flex;
 					justify-content: space-between;
 				}
 			`
@@ -185,7 +185,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title=${ this.localize('wizardStep1Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep1Header') } </h2>
-					<div class="action-bar">
+					<div class="d2l-action-bar">
 						<div>${this._renderImportCsvButton()}</div>
 						<div>${this._renderPreviousReportsButton()}</div>
 					</div>
@@ -198,7 +198,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 				<d2l-labs-step title=${ this.localize('wizardStep2Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep2Header') } </h2>
-					<div class="action-bar">
+					<div class="d2l-action-bar">
 						<div></div>
 						<div>${this._renderPreviousReportsButton()}</div>
 					</div>
