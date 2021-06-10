@@ -24,5 +24,7 @@ export default {
 	"wizardStep2Header": "User Selection Page",
 	"wizardStep1Title": "Select Grade Items",
 	"wizardStep2Title": "Select Users",
-	"importCsvButton": "Bulk CSV Import"
+	"importCsvButton": "Bulk CSV Import",
+	"SelectAllButton": "Select All {selectedStudentCount}",
+	"DeselectAllButton": "Deselect All {selectedStudentCount}"
 };
