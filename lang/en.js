@@ -26,5 +26,6 @@ export default {
 	"wizardStep2Title": "Select Users",
 	"importCsvButton": "Bulk CSV Import",
 	"SelectAllButton": "Select All {selectedStudentCount}",
-	"DeselectAllButton": "Deselect All {selectedStudentCount}"
+	"DeselectAllButton": "Deselect All {selectedStudentCount}",
+	"previousReportsButton": "View Previous Reports"
 };

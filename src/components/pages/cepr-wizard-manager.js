@@ -31,6 +31,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			importCsvUrl: {
 				type: String
 			},
+			previousReportsURL: {
+				type: String
+			},
 			selectedUsersCount: {
 				type: Number
 			}
@@ -42,6 +45,11 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			css`
 				#no-users-alert {
 					margin-bottom: 0.75rem;
+				}
+				.d2l-action-bar {
+					align-items: center;
+					display: flex;
+					justify-content: space-between;
 				}
 			`
 		];
@@ -101,6 +109,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		window.open(this.importCsvUrl);
 	}
 
+	_openPreviousReportsLink() {
+		window.open(this.previousReportsURL);
+	}
+
 	_renderFloatingButtons() {
 		return this.currentStep === 0 ?
 			html`
@@ -157,12 +169,26 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderPreviousReportsButton() {
+		if (!this.previousReportsURL) return html``;
+
+		return html`
+			<d2l-button-subtle
+				text="${this.localize('previousReportsButton')}"
+				@click="${this._openPreviousReportsLink}"
+			></d2l-button-subtle>
+		`;
+	}
+
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
 				<d2l-labs-step title=${ this.localize('wizardStep1Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep1Header') } </h2>
-					${this._renderImportCsvButton()}
+					<div class="d2l-action-bar">
+						<div>${this._renderImportCsvButton()}</div>
+						<div>${this._renderPreviousReportsButton()}</div>
+					</div>
 					<cepr-grade-item-selection-page
 						title=""
 						orgUnitId=${this.orgUnitId}
@@ -172,6 +198,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 				<d2l-labs-step title=${ this.localize('wizardStep2Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep2Header') } </h2>
+					<div class="d2l-action-bar">
+						<div></div>
+						<div>${this._renderPreviousReportsButton()}</div>
+					</div>
 					<cepr-user-selection-page
 						id="cepr-user-selection"
 						@change="${ this._userSelectionChange }"
