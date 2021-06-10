@@ -138,8 +138,8 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 			gradeItemQueries.push({
 				GradeItemId: gradeItemId,
-				LowerBounds: gradeItem.LowerBounds,
-				UpperBounds: gradeItem.UpperBounds
+				LowerBounds: gradeItem.LowerBounds / 100,
+				UpperBounds: gradeItem.UpperBounds / 100
 			});
 		});
 
