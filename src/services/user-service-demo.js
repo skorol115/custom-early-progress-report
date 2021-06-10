@@ -48,6 +48,10 @@ export class UserServiceDemo {
 		}
 	];
 
+	static async getAllUsers() {
+		return this.users;
+	}
+
 	static async getNumUsers() {
 		return this.users.length;
 	}
