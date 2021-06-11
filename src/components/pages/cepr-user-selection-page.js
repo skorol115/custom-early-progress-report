@@ -54,6 +54,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			allUsers: {
 				type: Array
+			},
+			previousReportsURL: {
+				type: String
 			}
 		};
 	}
@@ -70,6 +73,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 				:host([hidden]) {
 					display: none;
+				}
+
+				.d2l-action-bar {
+					align-items: center;
+					display: flex;
+					justify-content: space-between;
 				}
 
 				.d2l-spinner {
@@ -198,6 +207,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this._queryUsers();
 	}
 
+	_openPreviousReportsLink() {
+		window.open(this.previousReportsURL);
+	}
+
 	async _queryAllUsers() {
 		this.isQuerying = true;
 		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries);
@@ -214,6 +227,17 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries);
 		this.isQuerying = false;
+	}
+
+	_renderPreviousReportsButton() {
+		if (!this.previousReportsURL) return html``;
+
+		return html`
+			<d2l-button-subtle
+				text="${this.localize('previousReportsButton')}"
+				@click="${this._openPreviousReportsLink}"
+			></d2l-button-subtle>
+		`;
 	}
 
 	_renderSelectAllButton() {
@@ -260,7 +284,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderUsers() {
 		return html`
-			${this._renderSelectAllButton()}
+			<div class="d2l-action-bar">
+				<div>${this._renderSelectAllButton()}</div>
+				<div>${this._renderPreviousReportsButton()}</div>
+			</div>
 			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
 					<thead>
