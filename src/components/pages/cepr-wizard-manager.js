@@ -198,15 +198,12 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 				<d2l-labs-step title=${ this.localize('wizardStep2Title') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep2Header') } </h2>
-					<div class="d2l-action-bar">
-						<div></div>
-						<div>${this._renderPreviousReportsButton()}</div>
-					</div>
 					<cepr-user-selection-page
 						id="cepr-user-selection"
 						@change="${ this._userSelectionChange }"
 						orgUnitId=${ this.orgUnitId }
-						gradeItemQueries="${ this._getGradeItems }">
+						gradeItemQueries="${ this._getGradeItems }"
+						previousReportsURL="${this.previousReportsURL}">
 					</cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
