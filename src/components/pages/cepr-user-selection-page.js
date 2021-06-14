@@ -2,6 +2,7 @@ import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
 import '@brightspace-ui/core/components/inputs/input-checkbox.js';
+import '@brightspace-ui/core/components/inputs/input-search.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
 import '@brightspace-ui/core/components/table/table-col-sort-button.js';
@@ -97,6 +98,15 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				.d2l-table-cell-first {
 					width: 24px;
 				}
+
+				.d2l-actions-right {
+					display: flex;
+				}
+
+				#user-search {
+					margin-left: 0.5rem;
+					width: 15rem;
+				}
 			`
 		];
 	}
@@ -116,6 +126,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isLoading = true;
 		this.isQuerying = false;
 		this.allUsers = [];
+		this.searchTerm = '';
 	}
 
 	async connectedCallback() {
@@ -218,14 +229,14 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 		this.pageNumber = 1;
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries);
+		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm);
 		this.isQuerying = false;
 	}
 
@@ -237,6 +248,18 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				text="${this.localize('previousReportsButton')}"
 				@click="${this._openPreviousReportsLink}"
 			></d2l-button-subtle>
+		`;
+	}
+
+	_renderSearchBar() {
+		return html`
+			<d2l-input-search
+				id="user-search"
+				label="Search"
+				placeholder="Search Users"
+				value="${this.searchTerm}"
+				@d2l-input-search-searched="${this._search}">
+			</d2l-input-search>
 		`;
 	}
 
@@ -286,7 +309,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		return html`
 			<div class="d2l-action-bar">
 				<div>${this._renderSelectAllButton()}</div>
-				<div>${this._renderPreviousReportsButton()}</div>
+				<div class="d2l-actions-right">
+					${this._renderPreviousReportsButton()}
+					${this._renderSearchBar()}
+				</div>
 			</div>
 			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
@@ -363,6 +389,12 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				@pagination-item-counter-change=${this._handleItemsPerPageChange}
 			></d2l-labs-pagination>
 		`;
+	}
+
+	async _search(e) {
+		this.searchTerm = e.target.value;
+		await this._queryNumUsers();
+		await this._queryUsers();
 	}
 
 	_selectAllItemsEvent(e) {
