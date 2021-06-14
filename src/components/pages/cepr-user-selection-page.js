@@ -293,7 +293,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					<thead>
 						<th>
 							<d2l-input-checkbox
-								?checked=${this.selectedUsers.size === this.users.length}
+								?checked=${this.selectedUsers.size === this.users.length || this.selectedUsers.size === this.allUsers.length}
 								@change=${this._selectAllItemsEvent}
 							></d2l-input-checkbox>
 						</th>
