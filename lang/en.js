@@ -27,5 +27,6 @@ export default {
 	"importCsvButton": "Bulk CSV Import",
 	"SelectAllButton": "Select All {selectedStudentCount}",
 	"DeselectAllButton": "Deselect All {selectedStudentCount}",
-	"previousReportsButton": "View Previous Reports"
+	"previousReportsButton": "View Previous Reports",
+	"searchUserPlaceholder": "Search Users"
 };

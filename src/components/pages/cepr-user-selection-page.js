@@ -256,7 +256,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			<d2l-input-search
 				id="user-search"
 				label="Search"
-				placeholder="Search Users"
+				placeholder="${this.localize('searchUserPlaceholder')}"
 				value="${this.searchTerm}"
 				@d2l-input-search-searched="${this._search}">
 			</d2l-input-search>
