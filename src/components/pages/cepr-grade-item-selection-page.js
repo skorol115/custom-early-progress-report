@@ -173,19 +173,6 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 			}
 		});
 
-		// Sort grade items alphabetically
-		this.gradeItemList = this.gradeItemList.sort((a, b) => {
-			const nameA = a.Name.toUpperCase();
-			const nameB = b.Name.toUpperCase();
-			if (nameA < nameB) {
-				return -1;
-			} else if (nameA > nameB) {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
-
 		this.isQuerying = false;
 	}
 
