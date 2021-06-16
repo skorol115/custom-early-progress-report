@@ -36,6 +36,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			selectedUsersCount: {
 				type: Number
+			},
+			studentGradesSummaryOpened: {
+				type: Boolean
 			}
 		};
 	}
@@ -79,6 +82,14 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.wizard = this.shadowRoot.getElementById('wizard');
 	}
 
+	closeStudentGradesSummary() {
+		this.studentGradesSummaryOpened = false;
+	}
+
+	openStudentGradesSummary() {
+		this.studentGradesSummaryOpened = true;
+	}
+
 	get _getGradeItems() {
 		return JSON.stringify(this.gradeItemQueries);
 	}
@@ -87,6 +98,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemQueries = e.detail.gradeItemQueries;
 		this.gradeItemInvalid = e.detail.gradeItemInvalid;
 		this.hideNoUsersAlert = true;
+	}
+
+	_handleContinueToSalesforce() {
+		// Continue to SalesForce
 	}
 
 	_handleRestart() {
@@ -137,7 +152,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			: html`
 			<d2l-floating-buttons>
 				<d2l-button
-					primary>
+					primary
+					@click=${this._handleContinueToSalesforce}
+				>
 					${ this.localize('selectFeedbackButton') }
 				</d2l-button>
 				<d2l-button
@@ -145,6 +162,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					${ this.localize('restartButton') }
 				</d2l-button>
 				<d2l-button-subtle
+					?disabled="${!this.selectedUsersCount}"
+					@click="${this.openStudentGradesSummary}"
 					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsersCount }) }"
 				></d2l-button-subtle>
 			</d2l-floating-buttons>`;
@@ -203,8 +222,11 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						@change="${ this._userSelectionChange }"
 						orgUnitId=${ this.orgUnitId }
 						gradeItemQueries="${ this._getGradeItems }"
-						previousReportsURL="${this.previousReportsURL}">
-					</cepr-user-selection-page>
+						previousReportsURL="${this.previousReportsURL}"
+						?studentGradesSummaryOpened="${this.studentGradesSummaryOpened}"
+						@student-grades-summary-close=${this.closeStudentGradesSummary}
+						@student-grades-summary-continue-to-salesforce=${this._handleContinueToSalesforce}
+					></cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;
