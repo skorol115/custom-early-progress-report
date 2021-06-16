@@ -1,5 +1,6 @@
 import '@brightspace-ui/core/components/icons/icon.js';
 import '@brightspace-ui/core/components/inputs/input-checkbox.js';
+import '@brightspace-ui/core/components/inputs/input-number.js';
 import '@brightspace-ui/core/components/inputs/input-percent.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import { css, html, LitElement } from 'lit-element/lit-element.js';
@@ -70,6 +71,10 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				.d2l-is-hidden-icon {
 					margin: 0 0.75rem;
 				}
+
+				.d2l-grade-item-input {
+					--d2l-input-text-align: end;
+				}
 			`
 		];
 	}
@@ -124,15 +129,15 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 				// Set the validation state of the inner text inputs
 				const errorMsg = this.localize('minMaxGradeError');
-				this._setPercentInputInvalidState(`#lower_${gradeItemId}`, true, errorMsg);
-				this._setPercentInputInvalidState(`#upper_${gradeItemId}`, true, errorMsg);
+				this._setInputInvalidState(`#lower_${gradeItemId}`, errorMsg);
+				this._setInputInvalidState(`#upper_${gradeItemId}`, errorMsg);
 				gradeItemInvalid = true;
 
 			} else {
 
 				// Clear any existing invalid states
-				this._setPercentInputInvalidState(`#lower_${gradeItemId}`, false);
-				this._setPercentInputInvalidState(`#upper_${gradeItemId}`, false);
+				this._setInputInvalidState(`#lower_${gradeItemId}`);
+				this._setInputInvalidState(`#upper_${gradeItemId}`);
 
 			}
 
@@ -191,30 +196,40 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 					${gradeItem.IsHidden ? this._renderHiddenIcon() : null}
 				</td>
 				<td class="d2l-grade-item-range-column">
-					<d2l-input-percent
+					<d2l-input-number
+						class="d2l-grade-item-input"
 						input-width="100%"
 						label="${gradeItem.Name} ${this.localize('minGradeTableHeader')}"
 						label-hidden
-						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.LowerBounds}"
+						value="${this.gradeItemHash.get(gradeItem.GradeItemId).LowerBounds}"
 						id="lower_${gradeItem.GradeItemId}"
 						gradeItemId=${gradeItem.GradeItemId}
 						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
 						@change=${this._setGradeItemLowerBounds}
+						hide-invalid-icon
+						min="0"
+						max="100"
+						unit="%"
 						required>
-					</d2l-input-percent>
+					</d2l-input-number>
 				</td>
 				<td class="d2l-grade-item-range-column">
-					<d2l-input-percent
+					<d2l-input-number
+						class="d2l-grade-item-input"
 						input-width="100%"
 						label="${gradeItem.Name} ${this.localize('maxGradeTableHeader')}"
 						label-hidden
-						value="${this.gradeItemHash.get(gradeItem.GradeItemId)?.UpperBounds}"
+						value="${this.gradeItemHash.get(gradeItem.GradeItemId).UpperBounds}"
 						id="upper_${gradeItem.GradeItemId}"
 						gradeItemId=${gradeItem.GradeItemId}
 						?disabled=${!this.gradeItemSelection.has(gradeItem.GradeItemId)}
 						@change=${this._setGradeItemUpperBounds}
+						hide-invalid-icon
+						min="0"
+						max="100"
+						unit="%"
 						required>
-					</d2l-input-percent>
+					</d2l-input-number>
 				</td>
 			</tr>
 		`;
@@ -267,9 +282,13 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this._dispatchOnChange();
 	}
 
-	_setGradeItemLowerBounds(e) {
+	async _setGradeItemLowerBounds(e) {
+		const value = Math.min(Math.max(e.target.value, 0), 100);
 		const gradeItemId = parseInt(e.target.getAttribute('gradeItemId'));
-		this.gradeItemHash.get(gradeItemId).LowerBounds = e.target.value;
+
+		this.gradeItemHash.get(gradeItemId).LowerBounds = e.target.value = value;
+		await e.target.updateComplete;
+
 		this._dispatchOnChange();
 	}
 
@@ -281,26 +300,22 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		}
 	}
 
-	_setGradeItemUpperBounds(e) {
+	async _setGradeItemUpperBounds(e) {
+		const value = Math.min(Math.max(e.target.value, 0), 100);
 		const gradeItemId = parseInt(e.target.getAttribute('gradeItemId'));
-		this.gradeItemHash.get(gradeItemId).UpperBounds = e.target.value;
+
+		this.gradeItemHash.get(gradeItemId).UpperBounds = e.target.value = value;
+		await e.target.updateComplete;
+
 		this._dispatchOnChange();
 	}
 
-	_setPercentInputInvalidState(percentInputId, invalid, validationError = null) {
+	_setInputInvalidState(percentInputId, validationError = null) {
 
-		// NOTE: This is a hack, to get around the fact that d2l-input-percent doesn't expose custom validation hooks
+		// NOTE: This is a hack, to get around the fact that d2l-input-number doesn't expose custom validation hooks
 
-		// Red outline on d2l-input-percent element
-		const percentInput = this.shadowRoot.querySelector(percentInputId);
-		percentInput.invalid = invalid;
-
-		// Validation error message on inner d2l-input-number element
-		const innerNumberInput = percentInput?.shadowRoot.querySelector('d2l-input-number');
-		if (innerNumberInput) {
-			innerNumberInput.hideInvalidIcon = true;
-			innerNumberInput.validationError = validationError;
-		}
+		const numberInput = this.shadowRoot.querySelector(percentInputId);
+		numberInput.validationError = validationError;
 	}
 
 	_toggleGradeItemSelection(e) {
