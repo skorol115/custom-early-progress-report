@@ -21,12 +21,12 @@ export default {
 	"minMaxGradeError": "Maximum Grade must be higher than Minimum Grade.",
 	"hiddenIconTooltip": "Hidden",
 	"wizardStep1Header": "Select Grade Items",
-	"wizardStep2Header": "User Selection Page",
-	"wizardStep1Title": "Select Grade Items",
-	"wizardStep2Title": "Select Users",
+	"wizardStep2Header": "Select Students",
 	"importCsvButton": "Bulk CSV Import",
 	"SelectAllButton": "Select All {selectedStudentCount}",
 	"DeselectAllButton": "Deselect All {selectedStudentCount}",
 	"previousReportsButton": "View Previous Reports",
-	"searchUserPlaceholder": "Search Users"
+	"searchUserPlaceholder": "Search Users",
+	"selectedGradeItemsHeader": "Selected Grade Items",
+	"numberOfStudentsPerGrade": "{studentCount} Students",
 };

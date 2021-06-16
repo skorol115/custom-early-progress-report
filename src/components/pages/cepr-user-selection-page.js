@@ -58,6 +58,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			previousReportsURL: {
 				type: String
+			},
+			gradedStudentCount: {
+				type: Map
 			}
 		};
 	}
@@ -107,6 +110,34 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					margin-left: 0.5rem;
 					width: 15rem;
 				}
+
+				.d2l-selected-grades {
+					margin-left: 1rem;
+				}
+
+				.d2l-grade-range {
+					color: gray;
+					font-size: 12px;
+					margin-top: -0.5rem;
+				}
+
+				hr {
+					border: 1px solid #dddddd;
+					margin-top: -0.5rem;
+				}
+
+				td {
+					border-bottom: 1px solid #dddddd;
+					width: 20rem;
+				}
+
+				table {
+					margin-bottom: 1rem;
+				}
+
+				h3 {
+					margin-top: -0.5rem;
+				}
 			`
 		];
 	}
@@ -127,6 +158,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 		this.allUsers = [];
 		this.searchTerm = '';
+		this.gradedStudentCount = new Map();
 	}
 
 	async connectedCallback() {
@@ -176,6 +208,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		await this._queryUsers();
 		await this._queryAllUsers();
 		this._defaultSelectAll();
+		this._queryGradedStudentCount();
 		this.isLoading = false;
 	}
 
@@ -228,6 +261,19 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 	}
 
+	_queryGradedStudentCount() {
+		this.gradeItemQueries.map((gradeItem) => {
+			let studentCount = 0;
+			const gradeItemId = gradeItem.GradeItemId;
+			this.gradedStudentCount.set(gradeItemId, studentCount);
+			this.users.map((student) => {
+				if (student.Grades[gradeItemId]) {
+					this.gradedStudentCount.set(gradeItemId, ++studentCount);
+				}
+			});
+		});
+	}
+
 	async _queryNumUsers() {
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
@@ -238,6 +284,42 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm);
 		this.isQuerying = false;
+	}
+
+	_renderGradeCell(gradeItem) {
+		const gradeName = gradeItem.GradeItemName;
+		const lowerBound = Math.round(gradeItem.LowerBounds * 100);
+		const upperBound = Math.round(gradeItem.UpperBounds * 100);
+
+		return `<td>
+					${gradeName}
+					<div class="d2l-grade-range">
+						${lowerBound}% - ${upperBound}% (${(this.localize('numberOfStudentsPerGrade', { studentCount: this.gradedStudentCount.get(gradeItem.GradeItemId) }))})
+					</div>
+				</td>`;
+	}
+
+	_renderGradeItems() {
+		let htmlString = '';
+
+		for (let index = 0; index < this.gradeItemQueries.length; index += 3) {
+			const subArray = this.gradeItemQueries.slice(index, index + 3);
+			htmlString += this._renderGradeRow(subArray);
+		}
+
+		htmlString = htmlString.replace(/,/g, '');
+
+		return html([htmlString]);
+	}
+
+	_renderGradeRow(subArrayOfgradeItems) {
+		const size = subArrayOfgradeItems.length;
+		const blankCell = size === 1 ? '<td></td><td></td>' : size === 2 ? '<td></td>' : '';
+
+		return `<tr>
+					${subArrayOfgradeItems.map(gradeItem => `${this._renderGradeCell(gradeItem)}`)}
+					${blankCell}
+				</tr>`;
 	}
 
 	_renderPreviousReportsButton() {
@@ -277,6 +359,18 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderSelectedGradeItems() {
+		return html`<d2l-table-wrapper sticky-headers>
+				<table>
+					<h3>${this.localize('selectedGradeItemsHeader')}</h3>
+					<hr>
+					<tbody>
+						${ this._renderGradeItems() }
+					</tbody>
+				</table>
+				`;
+	}
+
 	_renderSpinner() {
 		return html`
 			<d2l-loading-spinner
@@ -307,6 +401,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderUsers() {
 		return html`
+			${this._renderSelectedGradeItems()}
 			<div class="d2l-action-bar">
 				<div>${this._renderSelectAllButton()}</div>
 				<div class="d2l-actions-right">
