@@ -6,13 +6,13 @@ export class UserService {
 		return allUsers;
 	}
 
-	static async getNumUsers(orgUnitId, gradeItemQueries = []) {
-		const numUsers = await EprRequests.getNumUsers(orgUnitId, gradeItemQueries);
+	static async getNumUsers(orgUnitId, gradeItemQueries = [], searchTerm = '') {
+		const numUsers = await EprRequests.getNumUsers(orgUnitId, gradeItemQueries, searchTerm);
 		return numUsers;
 	}
 
-	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = []) {
-		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries);
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = [], searchTerm = '') {
+		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm);
 		return users;
 	}
 }
