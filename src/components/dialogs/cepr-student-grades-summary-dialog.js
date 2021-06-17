@@ -244,7 +244,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		return html`
 			<thead>
 				<th>
-					Student
+					${this.localize('studentTableHeader')}
 				</th>
 				${this._renderTableHeaderGradeItems()}
 			</thead>

@@ -31,5 +31,6 @@ export default {
 	"DeselectAllButton": "Deselect All {selectedStudentCount}",
 	"previousReportsButton": "View Previous Reports",
 	"searchUserPlaceholder": "Search Users",
-	"studentGradesSummaryDialogTitle": "Selected Students ({selectedStudentsCount})"
+	"studentGradesSummaryDialogTitle": "Selected Students ({selectedStudentsCount})",
+	"studentTableHeader": "Student"
 };
