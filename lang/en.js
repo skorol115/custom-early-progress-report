@@ -14,6 +14,8 @@ export default {
 	"restartButton": "Restart",
 	"selectFeedbackButton": "Select Feedback",
 	"cancelButton": "Cancel",
+	"closeButton": "Close",
+	"continueToSalesForceButton": "Continue to SalesForce",
 	"gradeItemTableHeader": "Grade Item",
 	"minGradeTableHeader": "Minimum Grade",
 	"maxGradeTableHeader": "Maximum Grade",
@@ -28,5 +30,7 @@ export default {
 	"SelectAllButton": "Select All {selectedStudentCount}",
 	"DeselectAllButton": "Deselect All {selectedStudentCount}",
 	"previousReportsButton": "View Previous Reports",
-	"searchUserPlaceholder": "Search Users"
+	"searchUserPlaceholder": "Search Users",
+	"studentGradesSummaryDialogTitle": "Selected Students ({selectedStudentsCount})",
+	"studentTableHeader": "Student"
 };

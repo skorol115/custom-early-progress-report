@@ -6,13 +6,19 @@ import '@brightspace-ui/core/components/inputs/input-search.js';
 import '@brightspace-ui/core/components/loading-spinner/loading-spinner.js';
 import '@brightspace-ui-labs/pagination/pagination.js';
 import '@brightspace-ui/core/components/table/table-col-sort-button.js';
+import '../dialogs/cepr-student-grades-summary-dialog';
 import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { getDateFromISODateTime } from '@brightspace-ui/core/helpers/dateTime.js';
+import { guard } from 'lit-html/directives/guard.js';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 import { SortableColumn } from '../../constants';
 import { tableStyles } from '@brightspace-ui/core/components/table/table-wrapper.js';
 import { UserServiceFactory } from '../../services/user-service-factory';
+
+function filterSelectedUsers(allUsers, selectedUsers) {
+	return allUsers.filter((user) => selectedUsers.has(user.UserId));
+}
 
 class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
@@ -58,6 +64,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			previousReportsURL: {
 				type: String
+			},
+			studentGradesSummaryOpened: {
+				type: Boolean
 			}
 		};
 	}
@@ -127,6 +136,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 		this.allUsers = [];
 		this.searchTerm = '';
+		this.studentGradesSummaryOpened = false;
+		this._studentGradesSummaryData = [];
 	}
 
 	async connectedCallback() {
@@ -152,9 +163,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	_defaultSelectAll() {
 		this.selectedUsers = new Set();
 
-		this.allUsers.forEach(item => {
-			this._setUserSelection(item.UserId, true);
-		});
+		this._setUserSelection(this.allUsers.map(item => item.UserId), true);
 
 		this._dispatchOnChange();
 	}
@@ -167,7 +176,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			}
 		});
 		this.dispatchEvent(event);
-		this.requestUpdate();
 	}
 
 	async _getUserList() {
@@ -196,9 +204,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	_handleSelectAllButton() {
 		const checkAll = this.selectedUsers.size !== this.allUsers.length;
 
-		this.allUsers.forEach(user => {
-			this._setUserSelection(user.UserId, checkAll);
-		});
+		this._setUserSelection(this.allUsers.map(user => user.UserId), checkAll);
 
 		this._dispatchOnChange();
 	}
@@ -216,6 +222,14 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		// Users need to re-select all for new pages and sort parameters
 		this.selectAll = false;
 		this._queryUsers();
+	}
+
+	_handleStudentGradesSummaryClose() {
+		this.dispatchEvent(new CustomEvent('student-grades-summary-close'));
+	}
+
+	_handleStudentGradesSummaryContinueToSalesforce() {
+		this.dispatchEvent(new CustomEvent('student-grades-summary-continue-to-salesforce'));
 	}
 
 	_openPreviousReportsLink() {
@@ -306,6 +320,16 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_renderUsers() {
+		const studentsWithGrades = guard(
+			[this.allUsers, this.selectedUsers],
+			() => filterSelectedUsers(this.allUsers, this.selectedUsers)
+		);
+
+		const gradeItemIds = guard(
+			[this.gradeItemQueries],
+			() => this.gradeItemQueries.map(({ GradeItemId }) => GradeItemId)
+		);
+
 		return html`
 			<div class="d2l-action-bar">
 				<div>${this._renderSelectAllButton()}</div>
@@ -388,6 +412,14 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				@pagination-page-change=${this._handlePageChange}
 				@pagination-item-counter-change=${this._handleItemsPerPageChange}
 			></d2l-labs-pagination>
+			<cepr-student-grades-summary-dialog
+				orgUnitId=${this.orgUnitId}
+				?opened="${this.studentGradesSummaryOpened}"
+				.studentsWithGrades=${studentsWithGrades}
+				.gradeItemIds=${gradeItemIds}
+				@close=${this._handleStudentGradesSummaryClose}
+				@continue-to-salesforce=${this._handleStudentGradesSummaryContinueToSalesforce}
+			></cepr-student-grades-summary-dialog>
 		`;
 	}
 
@@ -399,9 +431,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	_selectAllItemsEvent(e) {
 		const checkAllItems = e.target.checked;
-		this.users.forEach(user => {
-			this._setUserSelection(user.UserId, checkAllItems);
-		});
+		this._setUserSelection(this.users.map(user => user.UserId), checkAllItems);
 		this._dispatchOnChange();
 	}
 
@@ -412,13 +442,22 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this._dispatchOnChange();
 	}
 
-	_setUserSelection(userId, selected) {
-		if (selected) {
-			this.selectedUsers.add(userId);
-		} else {
-			this.selectedUsers.delete(userId);
+	_setUserSelection(userIds, selected) {
+		if (!Array.isArray(userIds)) {
+			userIds = [userIds];
 		}
-	}
 
+		const newSelectedUsers = new Set(this.selectedUsers);
+
+		userIds.forEach((userId) => {
+			if (selected) {
+				newSelectedUsers.add(userId);
+			} else {
+				newSelectedUsers.delete(userId);
+			}
+		});
+
+		this.selectedUsers = newSelectedUsers;
+	}
 }
 customElements.define('cepr-user-selection-page', CeprUserSelectionPage);
