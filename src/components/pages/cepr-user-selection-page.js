@@ -126,7 +126,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 				.d2l-grade-range {
 					color: gray;
-					font-size: 12px;
+					font-size: 15px;
 					margin-top: -0.5rem;
 				}
 
@@ -135,17 +135,16 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					margin-top: -0.5rem;
 				}
 
-				td {
-					border-bottom: 1px solid #dddddd;
-					width: 20rem;
-				}
-
-				table {
+				.d2l-grade-items-container {
+					display: grid;
+					grid-gap: 12px;
+					grid-template-columns: 1fr 1fr 1fr;
 					margin-bottom: 1rem;
 				}
 
-				h3 {
-					margin-top: -0.5rem;
+				.d2l-grade-item-block {
+					border-bottom: 1px solid #dddddd;
+					padding: 0.5rem;
 				}
 			`
 		];
@@ -300,40 +299,19 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 	}
 
-	_renderGradeCell(gradeItem) {
+	_renderGradeItems(gradeItem) {
 		const gradeName = gradeItem.GradeItemName;
 		const lowerBound = Math.round(gradeItem.LowerBounds * 100);
 		const upperBound = Math.round(gradeItem.UpperBounds * 100);
 
-		return `<td>
-					${gradeName}
-					<div class="d2l-grade-range">
-						${lowerBound}% - ${upperBound}% (${(this.localize('numberOfStudentsPerGrade', { studentCount: this.gradedStudentCount.get(gradeItem.GradeItemId) }))})
-					</div>
-				</td>`;
-	}
-
-	_renderGradeItems() {
-		let htmlString = '';
-
-		for (let index = 0; index < this.gradeItemQueries.length; index += 3) {
-			const subArray = this.gradeItemQueries.slice(index, index + 3);
-			htmlString += this._renderGradeRow(subArray);
-		}
-
-		htmlString = htmlString.replace(/,/g, '');
-
-		return html([htmlString]);
-	}
-
-	_renderGradeRow(subArrayOfgradeItems) {
-		const size = subArrayOfgradeItems.length;
-		const blankCell = size === 1 ? '<td></td><td></td>' : size === 2 ? '<td></td>' : '';
-
-		return `<tr>
-					${subArrayOfgradeItems.map(gradeItem => `${this._renderGradeCell(gradeItem)}`)}
-					${blankCell}
-				</tr>`;
+		return html`
+			<div class="d2l-grade-item-block">
+				<b>${gradeName}</b>
+				<div class="d2l-grade-range">
+					${lowerBound}% - ${upperBound}% (${(this.localize('numberOfStudentsPerGrade', { studentCount: this.gradedStudentCount.get(gradeItem.GradeItemId) }))})
+				</div>
+			</div>
+		`;
 	}
 
 	_renderPreviousReportsButton() {
@@ -374,15 +352,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_renderSelectedGradeItems() {
-		return html`<d2l-table-wrapper sticky-headers>
-				<table>
-					<h3>${this.localize('selectedGradeItemsHeader')}</h3>
-					<hr>
-					<tbody>
-						${ this._renderGradeItems() }
-					</tbody>
-				</table>
-				`;
+		return html`
+			<h3>${this.localize('selectedGradeItemsHeader')}</h3>
+			<hr>
+			<div class="d2l-grade-items-container">
+				${this.gradeItemQueries.map(gradeItem => this._renderGradeItems(gradeItem))}
+			</div>
+		`;
 	}
 
 	_renderSpinner() {
