@@ -100,7 +100,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				}
 
 				d2l-input-checkbox {
-					margin: 0;
+					margin: 0 0 0 10px;
 				}
 
 				d2l-table-wrapper {
