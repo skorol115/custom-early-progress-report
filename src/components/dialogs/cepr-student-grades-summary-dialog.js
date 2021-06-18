@@ -267,7 +267,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 
 			return html`
 				<td>
-					${grade ? `${Math.round(grade * 100)}%` : null}
+					${isNaN(grade) ? null : `${Math.round(grade * 100)}%`}
 				</td>
 			`;
 		});
