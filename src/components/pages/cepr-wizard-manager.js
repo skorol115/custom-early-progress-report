@@ -8,6 +8,7 @@ import './cepr-user-selection-page.js';
 import './cepr-grade-item-selection-page';
 import { css, html, LitElement } from 'lit-element/lit-element';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
+import { RecordServiceFactory } from '../../services/record-service-factory';
 import { UserServiceFactory } from '../../services/user-service-factory';
 
 class CeprWizardManager extends LocalizeMixin(LitElement) {
@@ -34,8 +35,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			previousReportsURL: {
 				type: String
 			},
-			selectedUsersCount: {
-				type: Number
+			selectedUsers: {
+				type: Array
 			}
 		};
 	}
@@ -59,12 +60,13 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		super();
 
 		this.userService = UserServiceFactory.getUserService();
+		this.recordService = RecordServiceFactory.getRecordService();
 
 		this.currentStep = 0;
 		this.gradeItemQueries = [];
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
-		this.selectedUsersCount = 0;
+		this.selectedUsers = [];
 	}
 
 	render() {
@@ -136,8 +138,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			`
 			: html`
 			<d2l-floating-buttons>
-				<d2l-button
-					primary>
+				<d2l-button primary
+					@click="${ this._selectFeedback }"
+					?disabled=${this.selectedUsers.length === 0}>
 					${ this.localize('selectFeedbackButton') }
 				</d2l-button>
 				<d2l-button
@@ -145,7 +148,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					${ this.localize('restartButton') }
 				</d2l-button>
 				<d2l-button-subtle
-					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsersCount }) }"
+					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }"
 				></d2l-button-subtle>
 			</d2l-floating-buttons>`;
 	}
@@ -210,8 +213,13 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	async _selectFeedback() {
+		const redirectUrl = await this.recordService.createRecord(this.orgUnitId, this.selectedUsers);
+		window.open(redirectUrl, '_blank');
+	}
+
 	_userSelectionChange(e) {
-		this.selectedUsersCount = e.detail.selectedUsers;
+		this.selectedUsers = e.detail.selectedUsers;
 	}
 
 }

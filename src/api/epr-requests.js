@@ -3,6 +3,9 @@ import { Routes } from './routes';
 export class EprRequests {
 
 	// API Routes
+	static async createRecord(orgUnitId, userIds) {
+		return await this._post(Routes.Records(orgUnitId), JSON.stringify(userIds)).then(r => r.json());
+	}
 
 	static async getAllUsers(orgUnitId, gradeItemQueries) {
 		return await this._post(Routes.AllUsers(orgUnitId), JSON.stringify(gradeItemQueries)).then(r => r.json());
