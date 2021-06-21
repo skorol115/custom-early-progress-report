@@ -130,21 +130,22 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 					margin-top: -0.5rem;
 				}
 
-				hr {
-					border: 1px solid #dddddd;
-					margin-top: -0.5rem;
-				}
-
 				.d2l-grade-items-container {
 					display: grid;
-					grid-gap: 12px;
+					grid-gap: 0 12px;
 					grid-template-columns: 1fr 1fr 1fr;
 					margin-bottom: 1rem;
 				}
 
 				.d2l-grade-item-block {
 					border-bottom: 1px solid #dddddd;
+					border-top: 1px solid #dddddd;
+					margin-bottom: -1px;
 					padding: 0.5rem;
+				}
+
+				h3 {
+					margin: 0 0 10px 0;
 				}
 			`
 		];
@@ -354,7 +355,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	_renderSelectedGradeItems() {
 		return html`
 			<h3>${this.localize('selectedGradeItemsHeader')}</h3>
-			<hr>
 			<div class="d2l-grade-items-container">
 				${this.gradeItemQueries.map(gradeItem => this._renderGradeItems(gradeItem))}
 			</div>
