@@ -53,7 +53,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				}
 
 				d2l-input-checkbox {
-					margin: 0;
+					margin: 0 0 0 10px;
 				}
 
 				d2l-table-wrapper {
@@ -116,6 +116,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		// Compile selected grade items & ranges into a gradeItemQueries array
 		let gradeItemInvalid = false;
 		const gradeItemQueries = [];
+
 		this.gradeItemSelection.forEach(gradeItemId => {
 			const gradeItem = this.gradeItemHash.get(gradeItemId);
 
@@ -143,6 +144,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 			gradeItemQueries.push({
 				GradeItemId: gradeItemId,
+				GradeItemName: gradeItem.GradeItemName,
 				LowerBounds: gradeItem.LowerBounds / 100,
 				UpperBounds: gradeItem.UpperBounds / 100
 			});
@@ -168,10 +170,12 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.gradeItemList = [];
 		gradeItems.forEach(gradeItem => {
 			const gradeItemId = gradeItem.GradeItemId;
+			const gradeItemName = gradeItem.Name;
 			this.gradeItemList.push(gradeItem);
 			if (!this.gradeItemHash.has(gradeItemId)) {
 				this.gradeItemHash.set(gradeItemId, {
 					GradeItemId: gradeItemId,
+					GradeItemName: gradeItemName,
 					LowerBounds: 0,
 					UpperBounds: 100
 				});

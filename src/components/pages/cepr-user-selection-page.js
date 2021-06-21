@@ -65,6 +65,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			previousReportsURL: {
 				type: String
 			},
+			gradedStudentCount: {
+				type: Map
+			},
 			studentGradesSummaryOpened: {
 				type: Boolean
 			}
@@ -97,7 +100,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				}
 
 				d2l-input-checkbox {
-					margin: 0;
+					margin: 0 0 0 10px;
 				}
 
 				d2l-table-wrapper {
@@ -115,6 +118,34 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				#user-search {
 					margin-left: 0.5rem;
 					width: 15rem;
+				}
+
+				.d2l-selected-grades {
+					margin-left: 1rem;
+				}
+
+				.d2l-grade-range {
+					color: gray;
+					font-size: 15px;
+					margin-top: -0.5rem;
+				}
+
+				.d2l-grade-items-container {
+					display: grid;
+					grid-gap: 0 12px;
+					grid-template-columns: 1fr 1fr 1fr;
+					margin-bottom: 1rem;
+				}
+
+				.d2l-grade-item-block {
+					border-bottom: 1px solid #dddddd;
+					border-top: 1px solid #dddddd;
+					margin-bottom: -1px;
+					padding: 0.5rem;
+				}
+
+				h3 {
+					margin: 0 0 10px 0;
 				}
 			`
 		];
@@ -136,6 +167,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 		this.allUsers = [];
 		this.searchTerm = '';
+		this.gradedStudentCount = new Map();
 		this.studentGradesSummaryOpened = false;
 		this._studentGradesSummaryData = [];
 	}
@@ -184,6 +216,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		await this._queryUsers();
 		await this._queryAllUsers();
 		this._defaultSelectAll();
+		this._queryGradedStudentCount();
 		this.isLoading = false;
 	}
 
@@ -242,6 +275,19 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 	}
 
+	_queryGradedStudentCount() {
+		this.gradeItemQueries.map((gradeItem) => {
+			let studentCount = 0;
+			const gradeItemId = gradeItem.GradeItemId;
+			this.gradedStudentCount.set(gradeItemId, studentCount);
+			this.users.map((student) => {
+				if (student.Grades[gradeItemId]) {
+					this.gradedStudentCount.set(gradeItemId, ++studentCount);
+				}
+			});
+		});
+	}
+
 	async _queryNumUsers() {
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
@@ -252,6 +298,21 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm);
 		this.isQuerying = false;
+	}
+
+	_renderGradeItems(gradeItem) {
+		const gradeName = gradeItem.GradeItemName;
+		const lowerBound = Math.round(gradeItem.LowerBounds * 100);
+		const upperBound = Math.round(gradeItem.UpperBounds * 100);
+
+		return html`
+			<div class="d2l-grade-item-block">
+				<b>${gradeName}</b>
+				<div class="d2l-grade-range">
+					${lowerBound}% - ${upperBound}% (${(this.localize('numberOfStudentsPerGrade', { studentCount: this.gradedStudentCount.get(gradeItem.GradeItemId) }))})
+				</div>
+			</div>
+		`;
 	}
 
 	_renderPreviousReportsButton() {
@@ -288,6 +349,15 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				icon="${this.selectedUsers.size !== this.allUsers.length ? 'tier1:check-circle' : 'tier1:close-circle'}"
 				@click="${this._handleSelectAllButton}"
 			></d2l-button-subtle>
+		`;
+	}
+
+	_renderSelectedGradeItems() {
+		return html`
+			<h3>${this.localize('selectedGradeItemsHeader')}</h3>
+			<div class="d2l-grade-items-container">
+				${this.gradeItemQueries.map(gradeItem => this._renderGradeItems(gradeItem))}
+			</div>
 		`;
 	}
 
@@ -331,6 +401,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		);
 
 		return html`
+			${this._renderSelectedGradeItems()}
 			<div class="d2l-action-bar">
 				<div>${this._renderSelectAllButton()}</div>
 				<div class="d2l-actions-right">

@@ -202,7 +202,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	_renderWizard() {
 		return html`
 			<d2l-labs-wizard id="wizard" class="d2l-wizard">
-				<d2l-labs-step title=${ this.localize('wizardStep1Title') }  hide-restart-button="true" hide-next-button="true">
+				<d2l-labs-step title=${ this.localize('wizardStep1Header') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep1Header') } </h2>
 					<div class="d2l-action-bar">
 						<div>${this._renderImportCsvButton()}</div>
@@ -215,7 +215,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
 
-				<d2l-labs-step title=${ this.localize('wizardStep2Title') }  hide-restart-button="true" hide-next-button="true">
+				<d2l-labs-step title=${ this.localize('wizardStep2Header') }  hide-restart-button="true" hide-next-button="true">
 					<h2> ${ this.localize('wizardStep2Header') } </h2>
 					<cepr-user-selection-page
 						id="cepr-user-selection"
