@@ -37,6 +37,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			},
 			selectedUsers: {
 				type: Array
+			},
+			studentGradesSummaryOpened: {
+				type: Boolean
 			}
 		};
 	}
@@ -81,6 +84,14 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.wizard = this.shadowRoot.getElementById('wizard');
 	}
 
+	closeStudentGradesSummary() {
+		this.studentGradesSummaryOpened = false;
+	}
+
+	openStudentGradesSummary() {
+		this.studentGradesSummaryOpened = true;
+	}
+
 	get _getGradeItems() {
 		return JSON.stringify(this.gradeItemQueries);
 	}
@@ -89,6 +100,11 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemQueries = e.detail.gradeItemQueries;
 		this.gradeItemInvalid = e.detail.gradeItemInvalid;
 		this.hideNoUsersAlert = true;
+	}
+
+	async _handleContinueToSalesforce() {
+		const redirectUrl = await this.recordService.createRecord(this.orgUnitId, this.selectedUsers);
+		window.open(redirectUrl, '_blank');
 	}
 
 	_handleRestart() {
@@ -138,8 +154,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			`
 			: html`
 			<d2l-floating-buttons>
-				<d2l-button primary
-					@click="${ this._selectFeedback }"
+				<d2l-button
+					primary
+					@click=${this._handleContinueToSalesforce}
 					?disabled=${this.selectedUsers.length === 0}>
 					${ this.localize('selectFeedbackButton') }
 				</d2l-button>
@@ -148,8 +165,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					${ this.localize('restartButton') }
 				</d2l-button>
 				<d2l-button-subtle
-					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }"
-				></d2l-button-subtle>
+					@click="${this.openStudentGradesSummary}"
+					?disabled="${this.selectedUsers.length === 0}"
+					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }">
+				</d2l-button-subtle>
 			</d2l-floating-buttons>`;
 	}
 
@@ -206,16 +225,14 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						@change="${ this._userSelectionChange }"
 						orgUnitId=${ this.orgUnitId }
 						gradeItemQueries="${ this._getGradeItems }"
-						previousReportsURL="${this.previousReportsURL}">
-					</cepr-user-selection-page>
+						previousReportsURL="${this.previousReportsURL}"
+						?studentGradesSummaryOpened="${this.studentGradesSummaryOpened}"
+						@student-grades-summary-close=${this.closeStudentGradesSummary}
+						@student-grades-summary-continue-to-salesforce=${this._handleContinueToSalesforce}
+					></cepr-user-selection-page>
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;
-	}
-
-	async _selectFeedback() {
-		const redirectUrl = await this.recordService.createRecord(this.orgUnitId, this.selectedUsers);
-		window.open(redirectUrl, '_blank');
 	}
 
 	_userSelectionChange(e) {
