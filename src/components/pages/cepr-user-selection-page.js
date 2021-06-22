@@ -281,7 +281,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			const gradeItemId = gradeItem.GradeItemId;
 			this.gradedStudentCount.set(gradeItemId, studentCount);
 			this.users.map((student) => {
-				if (student.Grades[gradeItemId]) {
+				if (!isNaN(student.Grades[gradeItemId])) {
 					this.gradedStudentCount.set(gradeItemId, ++studentCount);
 				}
 			});
