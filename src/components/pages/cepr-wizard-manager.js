@@ -219,6 +219,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					<h2> ${ this.localize('wizardStep2Header') } </h2>
 					<cepr-user-selection-page
 						id="cepr-user-selection"
+						title=""
 						@change="${ this._userSelectionChange }"
 						orgUnitId=${ this.orgUnitId }
 						gradeItemQueries="${ this._getGradeItems }"
