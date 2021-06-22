@@ -48,6 +48,9 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		return [
 			tableStyles,
 			css`
+				table {
+					padding-right: 10px;
+				}
 				td:first-child, th:first-child {
 					left: -21px;
 					position: sticky;
