@@ -82,7 +82,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 	}
 
 	get maxPage() {
-		return Math.floor(this.studentsWithGrades.length / this.pageSize) + 1;
+		return Math.floor((this.studentsWithGrades.length - 1) / this.pageSize) + 1;
 	}
 
 	async connectedCallback() {
