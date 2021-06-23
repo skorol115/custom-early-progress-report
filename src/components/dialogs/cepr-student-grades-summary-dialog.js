@@ -48,6 +48,9 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		return [
 			tableStyles,
 			css`
+				table {
+					padding-right: 10px;
+				}
 				td:first-child, th:first-child {
 					left: -21px;
 					position: sticky;
@@ -79,7 +82,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 	}
 
 	get maxPage() {
-		return Math.floor(this.studentsWithGrades.length / this.pageSize) + 1;
+		return Math.floor((this.studentsWithGrades.length - 1) / this.pageSize) + 1;
 	}
 
 	async connectedCallback() {
@@ -126,9 +129,12 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 			this._gradeItems = this._getGradeItems();
 		}
 
-		// Compute _sortedStudents based on studentsWithGrades
 		if (changedProperties.has('studentsWithGrades')) {
+			// Compute _sortedStudents based on studentsWithGrades
 			this._sortedStudents = this._getSortedStudents();
+
+			// Reset current page when students change
+			this.pageNumber = 1;
 		}
 	}
 
