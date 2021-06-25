@@ -1,6 +1,7 @@
 import '@brightspace-ui-labs/wizard/d2l-wizard.js';
 import '@brightspace-ui-labs/wizard/d2l-step.js';
 import '@brightspace-ui/core/components/alert/alert.js';
+import '@brightspace-ui/core/components/alert/alert-toast';
 import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
@@ -27,6 +28,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 				type: Boolean
 			},
 			hideNoUsersAlert: {
+				type: Boolean
+			},
+			hideSelectFeedbackAlert: {
 				type: Boolean
 			},
 			importCsvUrl: {
@@ -69,6 +73,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemQueries = [];
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
+		this.hideSelectFeedbackAlert = true;
 		this.selectedUsers = [];
 	}
 
@@ -77,6 +82,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			${this._renderHeaderDescription()}
 			${this._renderWizard()}
 			${this._renderFloatingButtons()}
+			<d2l-alert-toast id="select-feedback-alert" type="critical">
+				${ this.localize('selectFeedbackAlert') }
+			</d2l-alert-toast>
 		`;
 	}
 
@@ -102,9 +110,14 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.hideNoUsersAlert = true;
 	}
 
-	async _handleContinueToSalesforce() {
-		const redirectUrl = await this.recordService.createRecord(this.orgUnitId, this.selectedUsers);
-		window.open(redirectUrl, '_blank');
+	_handleContinueToSalesforce() {
+		this.recordService.createRecord(this.orgUnitId, this.selectedUsers)
+			.then((redirectUrl) => {
+				window.open(redirectUrl, '_blank');
+			})
+			.catch(() => {
+				this.shadowRoot.getElementById('select-feedback-alert').setAttribute('open', '');
+			});
 	}
 
 	_handleRestart() {

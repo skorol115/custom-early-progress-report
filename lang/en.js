@@ -20,6 +20,7 @@ export default {
 	"minGradeTableHeader": "Minimum Grade",
 	"maxGradeTableHeader": "Maximum Grade",
 	"noUsersAlert": "There are no users with grades in the selected ranges.",
+	"selectFeedbackAlert": "An error occurred while launching an Early Progress Report. See System Logs for details.",
 	"minMaxGradeError": "Maximum Grade must be higher than Minimum Grade.",
 	"hiddenIconTooltip": "Hidden",
 	"wizardStep1Header": "Select Grade Items",
