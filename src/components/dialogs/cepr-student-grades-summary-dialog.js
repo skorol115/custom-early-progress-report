@@ -203,7 +203,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 	_renderTable() {
 		return html`
 			<d2l-table-wrapper sticky-headers>
-				<table class="d2l-table">
+				<table class="d2l-table" tabindex="0">
 					${this._renderTableHeader()}
 					${this._renderTableBody()}
 				</table>
