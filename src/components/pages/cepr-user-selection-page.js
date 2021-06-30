@@ -204,7 +204,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		// Dispatch change event to wizard wrapper
 		const event = new CustomEvent('change', {
 			detail: {
-				selectedUsers: this.selectedUsers.size
+				selectedUsers: Array.from(this.selectedUsers)
 			}
 		});
 		this.dispatchEvent(event);

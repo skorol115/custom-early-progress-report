@@ -1,6 +1,7 @@
 import '@brightspace-ui-labs/wizard/d2l-wizard.js';
 import '@brightspace-ui-labs/wizard/d2l-step.js';
 import '@brightspace-ui/core/components/alert/alert.js';
+import '@brightspace-ui/core/components/alert/alert-toast';
 import '@brightspace-ui/core/components/button/button.js';
 import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
@@ -8,6 +9,7 @@ import './cepr-user-selection-page.js';
 import './cepr-grade-item-selection-page';
 import { css, html, LitElement } from 'lit-element/lit-element';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
+import { RecordServiceFactory } from '../../services/record-service-factory';
 import { UserServiceFactory } from '../../services/user-service-factory';
 
 class CeprWizardManager extends LocalizeMixin(LitElement) {
@@ -28,14 +30,17 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			hideNoUsersAlert: {
 				type: Boolean
 			},
+			hideSelectFeedbackAlert: {
+				type: Boolean
+			},
 			importCsvUrl: {
 				type: String
 			},
 			previousReportsURL: {
 				type: String
 			},
-			selectedUsersCount: {
-				type: Number
+			selectedUsers: {
+				type: Array
 			},
 			studentGradesSummaryOpened: {
 				type: Boolean
@@ -62,12 +67,14 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		super();
 
 		this.userService = UserServiceFactory.getUserService();
+		this.recordService = RecordServiceFactory.getRecordService();
 
 		this.currentStep = 0;
 		this.gradeItemQueries = [];
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
-		this.selectedUsersCount = 0;
+		this.hideSelectFeedbackAlert = true;
+		this.selectedUsers = [];
 	}
 
 	render() {
@@ -75,6 +82,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			${this._renderHeaderDescription()}
 			${this._renderWizard()}
 			${this._renderFloatingButtons()}
+			<d2l-alert-toast id="select-feedback-alert" type="critical">
+				${ this.localize('selectFeedbackAlert') }
+			</d2l-alert-toast>
 		`;
 	}
 
@@ -101,7 +111,13 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	_handleContinueToSalesforce() {
-		// Continue to SalesForce
+		this.recordService.createRecord(this.orgUnitId, this.selectedUsers)
+			.then((redirectUrl) => {
+				window.open(redirectUrl, '_blank');
+			})
+			.catch(() => {
+				this.shadowRoot.getElementById('select-feedback-alert').setAttribute('open', '');
+			});
 	}
 
 	_handleRestart() {
@@ -154,7 +170,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 				<d2l-button
 					primary
 					@click=${this._handleContinueToSalesforce}
-				>
+					?disabled=${this.selectedUsers.length === 0}>
 					${ this.localize('selectFeedbackButton') }
 				</d2l-button>
 				<d2l-button
@@ -162,10 +178,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					${ this.localize('restartButton') }
 				</d2l-button>
 				<d2l-button-subtle
-					?disabled="${!this.selectedUsersCount}"
 					@click="${this.openStudentGradesSummary}"
-					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsersCount }) }"
-				></d2l-button-subtle>
+					?disabled="${this.selectedUsers.length === 0}"
+					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }">
+				</d2l-button-subtle>
 			</d2l-floating-buttons>`;
 	}
 
@@ -234,7 +250,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	_userSelectionChange(e) {
-		this.selectedUsersCount = e.detail.selectedUsers;
+		this.selectedUsers = e.detail.selectedUsers;
 	}
 
 }
