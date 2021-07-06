@@ -39,6 +39,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			previousReportsURL: {
 				type: String
 			},
+			returnUrl: {
+				type: String
+			},
 			selectedUsers: {
 				type: Array
 			},
@@ -113,11 +116,19 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	_handleContinueToSalesforce() {
 		this.recordService.createRecord(this.orgUnitId, this.selectedUsers)
 			.then((redirectUrl) => {
+				// Open next wizard step
+				this.wizard.next();
+				this.currentStep = this.wizard.currentStep();
+
 				window.open(redirectUrl, '_blank');
 			})
 			.catch(() => {
 				this.shadowRoot.getElementById('select-feedback-alert').setAttribute('open', '');
 			});
+	}
+
+	_handleDone() {
+		location.href = this.returnUrl;
 	}
 
 	_handleRestart() {
@@ -145,44 +156,59 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	_renderFloatingButtons() {
-		return this.currentStep === 0 ?
-			html`
-			<d2l-floating-buttons>
-				<d2l-alert id="no-users-alert" type="critical" ?hidden=${this.hideNoUsersAlert} style>
-					${this.localize('noUsersAlert')}
-				</d2l-alert>
-				<d2l-button
-					primary
-					@click="${ this._handleStepOneNext }"
-					?disabled=${this.gradeItemQueries.length === 0 || this.gradeItemInvalid}>
-					${ this.localize('nextButton') }
-				</d2l-button>
-				<d2l-button>
-					${ this.localize('cancelButton') }
-				</d2l-button>
-				<d2l-button-subtle
-					text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: this.gradeItemQueries.length }) }">
-				</d2l-button-subtle>
-			</d2l-floating-buttons>
-			`
-			: html`
-			<d2l-floating-buttons>
-				<d2l-button
-					primary
-					@click=${this._handleContinueToSalesforce}
-					?disabled=${this.selectedUsers.length === 0}>
-					${ this.localize('selectFeedbackButton') }
-				</d2l-button>
-				<d2l-button
-					@click="${ this._handleRestart }">
-					${ this.localize('restartButton') }
-				</d2l-button>
-				<d2l-button-subtle
-					@click="${this.openStudentGradesSummary}"
-					?disabled="${this.selectedUsers.length === 0}"
-					text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }">
-				</d2l-button-subtle>
-			</d2l-floating-buttons>`;
+		switch (this.currentStep) {
+			case 0:
+				return html`
+					<d2l-floating-buttons>
+						<d2l-alert id="no-users-alert" type="critical" ?hidden=${this.hideNoUsersAlert} style>
+							${this.localize('noUsersAlert')}
+						</d2l-alert>
+						<d2l-button
+							primary
+							@click="${ this._handleStepOneNext }"
+							?disabled=${this.gradeItemQueries.length === 0 || this.gradeItemInvalid}>
+							${ this.localize('nextButton') }
+						</d2l-button>
+						<d2l-button>
+							${ this.localize('cancelButton') }
+						</d2l-button>
+						<d2l-button-subtle
+							text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: this.gradeItemQueries.length }) }">
+						</d2l-button-subtle>
+					</d2l-floating-buttons>
+				`;
+			case 1:
+				return html`
+					<d2l-floating-buttons>
+						<d2l-button
+							primary
+							@click=${this._handleContinueToSalesforce}
+							?disabled=${this.selectedUsers.length === 0}>
+							${ this.localize('selectFeedbackButton') }
+						</d2l-button>
+						<d2l-button
+							@click="${ this._handleRestart }">
+							${ this.localize('restartButton') }
+						</d2l-button>
+						<d2l-button-subtle
+							@click="${this.openStudentGradesSummary}"
+							?disabled="${this.selectedUsers.length === 0}"
+							text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }">
+						</d2l-button-subtle>
+					</d2l-floating-buttons>
+				`;
+			case 2:
+				return html`
+					<d2l-floating-buttons>
+						<d2l-button
+							primary
+							@click=${this._handleDone}
+						>
+							${ this.localize('doneButton') }
+						</d2l-button>
+					</d2l-floating-buttons>
+				`;
+		}
 	}
 
 	_renderHeaderDescription() {
@@ -244,6 +270,11 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						@student-grades-summary-close=${this.closeStudentGradesSummary}
 						@student-grades-summary-continue-to-salesforce=${this._handleContinueToSalesforce}
 					></cepr-user-selection-page>
+				</d2l-labs-step>
+
+				<d2l-labs-step title=${ this.localize('wizardStep3Header') }  hide-restart-button="true" hide-next-button="true">
+					<h2> ${ this.localize('wizardStep3Header') } </h2>
+					${this.localize('selectFeedbackMessage')}
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;
