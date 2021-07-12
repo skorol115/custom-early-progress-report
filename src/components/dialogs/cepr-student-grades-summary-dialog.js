@@ -110,9 +110,9 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 			<d2l-button
 				slot="footer"
 				primary
-				@click=${this._handleContinueToSalesForce}
+				@click=${this._handleContinueToSalesforce}
 			>
-				${this.localize('continueToSalesForceButton')}
+				${this.localize('continueToSalesforceButton')}
 			</d2l-button>
 			<d2l-button slot="footer" data-dialog-action>
 				${this.localize('closeButton')}
@@ -168,7 +168,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		});
 	}
 
-	_handleContinueToSalesForce() {
+	_handleContinueToSalesforce() {
 		this.dispatchEvent(new CustomEvent('continue-to-salesforce'));
 	}
 
