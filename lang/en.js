@@ -16,7 +16,7 @@ export default {
 	"cancelButton": "Cancel",
 	"closeButton": "Close",
 	"doneButton": "Done",
-	"continueToSalesForceButton": "Continue to SalesForce",
+	"continueToSalesforceButton": "Continue to Salesforce",
 	"gradeItemTableHeader": "Grade Item",
 	"minGradeTableHeader": "Minimum Grade",
 	"maxGradeTableHeader": "Maximum Grade",
