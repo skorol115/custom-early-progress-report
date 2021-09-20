@@ -84,7 +84,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		return html`
 			${this._renderHeaderDescription()}
 			${this._renderWizard()}
-			${this._renderFloatingButtons()}
+			<d2l-floating-buttons>
+				${this._renderFloatingButtons()}
+			</d2l-floating-buttons>
 			<d2l-alert-toast id="select-feedback-alert" type="critical">
 				${ this.localize('selectFeedbackAlert') }
 			</d2l-alert-toast>
@@ -159,54 +161,48 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		switch (this.currentStep) {
 			case 0:
 				return html`
-					<d2l-floating-buttons>
-						<d2l-alert id="no-users-alert" type="critical" ?hidden=${this.hideNoUsersAlert} style>
-							${this.localize('noUsersAlert')}
-						</d2l-alert>
-						<d2l-button
-							primary
-							@click="${ this._handleStepOneNext }"
-							?disabled=${this.gradeItemQueries.length === 0 || this.gradeItemInvalid}>
-							${ this.localize('nextButton') }
-						</d2l-button>
-						<d2l-button>
-							${ this.localize('cancelButton') }
-						</d2l-button>
-						<d2l-button-subtle
-							text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: this.gradeItemQueries.length }) }">
-						</d2l-button-subtle>
-					</d2l-floating-buttons>
+					<d2l-alert id="no-users-alert" type="critical" ?hidden=${this.hideNoUsersAlert} style>
+						${this.localize('noUsersAlert')}
+					</d2l-alert>
+					<d2l-button
+						primary
+						@click="${ this._handleStepOneNext }"
+						?disabled=${this.gradeItemQueries.length === 0 || this.gradeItemInvalid}>
+						${ this.localize('nextButton') }
+					</d2l-button>
+					<d2l-button>
+						${ this.localize('cancelButton') }
+					</d2l-button>
+					<d2l-button-subtle
+						text="${ this.localize('numberOfSelectedGradeItems', { selectedGradeItemsCount: this.gradeItemQueries.length }) }">
+					</d2l-button-subtle>
 				`;
 			case 1:
 				return html`
-					<d2l-floating-buttons>
-						<d2l-button
-							primary
-							@click=${this._handleContinueToSalesforce}
-							?disabled=${this.selectedUsers.length === 0}>
-							${ this.localize('selectFeedbackButton') }
-						</d2l-button>
-						<d2l-button
-							@click="${ this._handleRestart }">
-							${ this.localize('restartButton') }
-						</d2l-button>
-						<d2l-button-subtle
-							@click="${this.openStudentGradesSummary}"
-							?disabled="${this.selectedUsers.length === 0}"
-							text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }">
-						</d2l-button-subtle>
-					</d2l-floating-buttons>
+					<d2l-button
+						primary
+						@click=${this._handleContinueToSalesforce}
+						?disabled=${this.selectedUsers.length === 0}>
+						${ this.localize('selectFeedbackButton') }
+					</d2l-button>
+					<d2l-button
+						@click="${ this._handleRestart }">
+						${ this.localize('restartButton') }
+					</d2l-button>
+					<d2l-button-subtle
+						@click="${this.openStudentGradesSummary}"
+						?disabled="${this.selectedUsers.length === 0}"
+						text="${ this.localize('numberOfSelectedStudents', { selectedStudentsCount: this.selectedUsers.length }) }">
+					</d2l-button-subtle>
 				`;
 			case 2:
 				return html`
-					<d2l-floating-buttons>
-						<d2l-button
-							primary
-							@click=${this._handleDone}
-						>
-							${ this.localize('doneButton') }
-						</d2l-button>
-					</d2l-floating-buttons>
+					<d2l-button
+						primary
+						@click=${this._handleDone}
+					>
+						${ this.localize('doneButton') }
+					</d2l-button>
 				`;
 		}
 	}
