@@ -170,7 +170,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						?disabled=${this.gradeItemQueries.length === 0 || this.gradeItemInvalid}>
 						${ this.localize('nextButton') }
 					</d2l-button>
-					<d2l-button>
+					<d2l-button
+						@click="${ this._handleDone }">
 						${ this.localize('cancelButton') }
 					</d2l-button>
 					<d2l-button-subtle
