@@ -7,7 +7,7 @@ import '@brightspace-ui/core/components/button/button-subtle.js';
 import '@brightspace-ui/core/components/button/floating-buttons.js';
 import './cepr-user-selection-page.js';
 import './cepr-grade-item-selection-page';
-import { css, html, LitElement } from 'lit-element/lit-element';
+import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
 import { RecordServiceFactory } from '../../services/record-service-factory';
 import { UserServiceFactory } from '../../services/user-service-factory';
