@@ -92,26 +92,29 @@ npm start
 
 ## Versioning & Releasing
 
-All version changes should obey [semantic versioning](https://semver.org/) rules.
+The [incremental-release GitHub Action](https://github.com/BrightspaceUI/actions/tree/main/incremental-release) is called from the `release.yml` GitHub Action workflow to handle version changes and releasing.
 
-By default, a patch release will be created anytime code is merged into master. To specify the type of release include either `[increment major]`, `[increment minor]` or `[increment patch]` in your merge commit message to automatically increment the `package.json` version, create a tag, and trigger a deployment to NPM.
+### Triggering a Release
 
-If you want to bypass and skip a release, include `[skip release]` in your merge commit message.
+Releases occur based on the most recent commit message:
+* Commits which contain `[increment patch]` will trigger a `patch` release. Example: `validate input before using [increment patch]`
+* Commits which contain `[increment minor]` will trigger a `minor` release. Example: `add toggle() method [increment minor]`
+* Commits which contain `[increment major]` will trigger a `major` release. Example: `breaking all the things [increment major]`
 
-### Releases
+**Note:** When merging a pull request, this will be the merge commit message.
 
-When a release is triggered, it will:
-* Update the version in `package.json`
-* Tag the commit
-* Create a GitHub release (including release notes)
-* Deploy a new package to NPM
+### Default Increment
 
-### Releasing from Maintenance Branches
+Normally, if the most recent commit does not contain `[increment major|minor|patch]`, no release will occur. However, by setting the `DEFAULT_INCREMENT` option you can control which type of release will occur. This repo has the `DEFAULT_INCREMENT` set to be a `patch` release.
 
-Occasionally you'll want to backport a feature or bug fix to an older release. `semantic-release` refers to these as [maintenance branches](https://semantic-release.gitbook.io/semantic-release/usage/workflow-configuration#maintenance-branches).
+In this example, a minor release will occur if no increment value is found in the most recent commit:
 
-Maintenance branch names should be of the form: `+([0-9])?(.{+([0-9]),x}).x`.
+```yml
+uses: BrightspaceUI/actions/incremental-release@main
+with:
+  DEFAULT_INCREMENT: minor
+```
 
-Regular expressions are complicated, but this essentially means branch names should look like:
-* `1.15.x` for patch releases on top of the `1.15` release (after version `1.16` exists)
-* `2.x` for feature releases on top of the `2` release (after version `3` exists)
+### Skipping Releases
+
+When a default increment is specified, sometimes you want to bypass it and skip a release. To do this, include `[skip version]` in the commit message.
