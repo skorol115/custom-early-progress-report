@@ -254,7 +254,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						title=""
 						orgUnitId=${this.orgUnitId}
 						@change=${this._gradeItemQueryChange}
-						enableEprEnhancements="${this.enableEprEnhancements}">
+						?enableEprEnhancements="${this.enableEprEnhancements}">
 					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
 

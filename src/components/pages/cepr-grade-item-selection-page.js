@@ -14,9 +14,6 @@ import { UserServiceFactory } from '../../services/user-service-factory';
 class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
-			enableEprEnhancements: {
-				type: Boolean
-			},
 			gradeItems: {
 				type: Map
 			},
@@ -34,6 +31,9 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			orgUnitId: {
 				type: String
+			},
+			enableEprEnhancements: {
+				type: Boolean
 			}
 		};
 	}
@@ -293,12 +293,12 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderSelectionContainer() {
 		return html`
-			<div class="selection-filter-container">
-				<span class="selection-filter-header">
+			<div class="d2l-selection-filter-container">
+				<span class="d2l-selection-filter-header">
 					${this.localize('selectionCriteriaHeader')}
 				</span>
 				<div>
-					<label class="d2l-input-radio-label input-checkbox-label">
+					<label class="d2l-input-radio-label d2l-input-checkbox-label">
 						<input
 							type="radio"
 							name="selectCriteriaGroup"
@@ -308,7 +308,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 						>
 						${this.localize('AnySelectionCriteria')}
 					</label>
-					<label class="d2l-input-radio-label input-checkbox-label">
+					<label class="d2l-input-radio-label d2l-input-checkbox-label">
 						<input
 							type="radio"
 							name="selectCriteriaGroup"
