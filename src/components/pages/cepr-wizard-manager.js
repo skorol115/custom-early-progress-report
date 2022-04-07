@@ -18,6 +18,9 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			currentStep: {
 				type: Number
 			},
+			enableEprEnhancements: {
+				type: Boolean
+			},
 			orgUnitId: {
 				type: String
 			},
@@ -250,7 +253,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					<cepr-grade-item-selection-page
 						title=""
 						orgUnitId=${this.orgUnitId}
-						@change=${this._gradeItemQueryChange}>
+						@change=${this._gradeItemQueryChange}
+						enableEprEnhancements="${this.enableEprEnhancements}">
 					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
 

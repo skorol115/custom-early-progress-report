@@ -7,11 +7,16 @@ import { css, html, LitElement } from 'lit-element/lit-element.js';
 import { GradeItemServiceFactory } from '../../services/grade-item-service-factory';
 import { heading1Styles  } from '@brightspace-ui/core/components/typography/styles.js';
 import { LocalizeMixin } from '../../mixins/localize-mixin';
+import { radioStyles } from '@brightspace-ui/core/components/inputs/input-radio-styles.js';
 import { tableStyles } from '@brightspace-ui/core/components/table/table-wrapper.js';
+import { UserServiceFactory } from '../../services/user-service-factory';
 
 class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 	static get properties() {
 		return {
+			enableEprEnhancements: {
+				type: Boolean
+			},
 			gradeItems: {
 				type: Map
 			},
@@ -37,6 +42,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		return [
 			heading1Styles,
 			tableStyles,
+			radioStyles,
 			css`
 				:host {
 					display: inline-block;
@@ -75,6 +81,19 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 				.d2l-grade-item-input {
 					--d2l-input-text-align: end;
 				}
+
+				.input-checkbox-label{
+					margin-bottom: 0.4rem;
+				}
+
+				.selection-filter-header{
+					font-size: 15px;
+					font-weight: bold;
+				}
+
+				.selection-filter-container{
+					margin-bottom: 1.5rem;
+				}
 			`
 		];
 	}
@@ -83,6 +102,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		super();
 
 		this.gradeItemService = GradeItemServiceFactory.getGradeItemService();
+		this.userService = UserServiceFactory.getUserService();
 
 		this.gradeItemList = [];
 
@@ -151,13 +171,14 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		});
 
 		// Dispatch change event to wizard wrapper
-		const event = new CustomEvent('change', {
+		const change = new CustomEvent('change', {
 			detail: {
 				gradeItemInvalid: gradeItemInvalid,
 				gradeItemQueries: gradeItemQueries
 			}
 		});
-		this.dispatchEvent(event);
+
+		this.dispatchEvent(change);
 		this.requestUpdate();
 	}
 
@@ -241,6 +262,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderGradeItems() {
 		return html`
+			${ this.enableEprEnhancements ? this._renderSelectionContainer() : html`` }
 			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
 					<thead>
@@ -269,6 +291,37 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderSelectionContainer() {
+		return html`
+			<div class="selection-filter-container">
+				<span class="selection-filter-header">
+					${this.localize('selectionCriteriaHeader')}
+				</span>
+				<div>
+					<label class="d2l-input-radio-label input-checkbox-label">
+						<input
+							type="radio"
+							name="selectCriteriaGroup"
+							value="any"
+							@change="${this._setCriteriaSelection}"
+							checked
+						>
+						${this.localize('AnySelectionCriteria')}
+					</label>
+					<label class="d2l-input-radio-label input-checkbox-label">
+						<input
+							type="radio"
+							name="selectCriteriaGroup"
+							value="all"
+							@change="${this._setCriteriaSelection}"
+						>
+						${this.localize('AllSelectionCriteria')}
+					</label>
+				</div>
+			</div>
+		`;
+	}
+
 	_renderSpinner() {
 		return html`
 			<d2l-loading-spinner
@@ -284,6 +337,14 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 			this._setGradeItemSelection(gradeItem.GradeItemId, checkAllItems);
 		});
 		this._dispatchOnChange();
+	}
+
+	async _setCriteriaSelection(e) {
+		if (e.target.value === 'any') {
+			this.userService.searchAllCriteria = false;
+			return;
+		}
+		this.userService.searchAllCriteria = true;
 	}
 
 	async _setGradeItemLowerBounds(e) {
