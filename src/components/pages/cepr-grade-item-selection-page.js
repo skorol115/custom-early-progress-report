@@ -82,16 +82,16 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 					--d2l-input-text-align: end;
 				}
 
-				.input-checkbox-label{
+				.d2l-input-checkbox-label {
 					margin-bottom: 0.4rem;
 				}
 
-				.selection-filter-header{
+				.d2l-selection-filter-header {
 					font-size: 15px;
 					font-weight: bold;
 				}
 
-				.selection-filter-container{
+				.d2l-selection-filter-container {
 					margin-bottom: 1.5rem;
 				}
 			`
