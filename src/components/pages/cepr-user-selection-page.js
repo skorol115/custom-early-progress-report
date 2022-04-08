@@ -266,7 +266,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_openPreviousReportsLink() {
-		window.open(this.previousReportsURL);
+		window.open(this.previousReportsURL.replace('{orgUnitId}', this.orgUnitId));
 	}
 
 	async _queryAllUsers() {

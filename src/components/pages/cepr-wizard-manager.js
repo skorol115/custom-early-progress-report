@@ -157,7 +157,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	_openPreviousReportsLink() {
-		window.open(this.previousReportsURL);
+		window.open(this.previousReportsURL.replace('{orgUnitId}', this.orgUnitId));
 	}
 
 	_renderFloatingButtons() {
