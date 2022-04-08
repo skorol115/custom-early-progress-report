@@ -36,5 +36,8 @@ export default {
 	"selectFeedbackMessage": "Salesforce should now open in a new tab or window, where you can select feedback and complete the progress report.",
 	"numberOfStudentsPerGrade": "{studentCount} Students",
 	"studentGradesSummaryDialogTitle": "Selected Students ({selectedStudentsCount})",
-	"studentTableHeader": "Student"
+	"studentTableHeader": "Student",
+	"selectionCriteriaHeader": "Show students who fit",
+	"AllSelectionCriteria": "All selected criteria",
+	"AnySelectionCriteria": "Any selected criteria"
 };

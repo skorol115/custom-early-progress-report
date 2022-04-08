@@ -15,6 +15,10 @@ class CustomEarlyProgressReport extends LitElement {
 			},
 			returnUrl: {
 				type: String
+			},
+			enableEprEnhancements: {
+				type: Boolean,
+				attribute : 'enable-epr-enhancements'
 			}
 		};
 	}
@@ -37,6 +41,7 @@ class CustomEarlyProgressReport extends LitElement {
 				importCsvUrl="${this.importCsvUrl}"
 				previousReportsURL="${this.historyEndpoint}"
 				returnUrl="${this.returnUrl}"
+				?enableEprEnhancements="${this.enableEprEnhancements}"
 			></cepr-wizard-manager>
 		`;
 	}

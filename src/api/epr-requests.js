@@ -19,8 +19,8 @@ export class EprRequests {
 		return await this._post(Routes.NumUsers(orgUnitId, searchTerm), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
-	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm) {
-		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc, searchTerm), JSON.stringify(gradeItemQueries)).then(r => r.json());
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, searchOption) {
+		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc, searchTerm, searchOption), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
 	// Helper Methods
