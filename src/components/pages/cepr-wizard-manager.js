@@ -112,6 +112,22 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		return JSON.stringify(this.gradeItemQueries);
 	}
 
+	_disableNextButton() {
+		if (this.enableEprEnhancements) {
+			return false;
+		}
+
+		return this.gradeItemQueries.length === 0 || this.gradeItemInvalid;
+	}
+
+	_getNextButtonTitle() {
+		if (this.enableEprEnhancements) {
+			return this.gradeItemQueries.length === 0 ? this.localize('nextButtonSkip') : this.localize('nextButtonContinue');
+		}
+
+		return this.localize('nextButton');
+	}
+
 	_gradeItemQueryChange(e) {
 		this.gradeItemQueries = e.detail.gradeItemQueries;
 		this.gradeItemInvalid = e.detail.gradeItemInvalid;
@@ -142,6 +158,12 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	async _handleStepOneNext() {
+		if (this.enableEprEnhancements && this.gradeItemQueries.length === 0) {
+			this.wizard.next();
+			this.currentStep = this.wizard.currentStep();
+			return;
+		}
+
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		if (numUsers === 0) {
 			this.hideNoUsersAlert = false;
@@ -170,8 +192,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					<d2l-button
 						primary
 						@click="${ this._handleStepOneNext }"
-						?disabled=${this.gradeItemQueries.length === 0 || this.gradeItemInvalid}>
-						${ this.localize('nextButton') }
+						?disabled=${ this._disableNextButton() }>
+						${ this._getNextButtonTitle() }
 					</d2l-button>
 					<d2l-button
 						@click="${ this._handleDone }">
