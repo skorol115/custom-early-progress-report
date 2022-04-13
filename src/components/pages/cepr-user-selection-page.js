@@ -353,6 +353,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	_renderSelectedGradeItems() {
+		if (this.gradeItemQueries.length === 0) {
+			return html`<h3>${this.localize('emptyGradeFilter')}</h3>`;
+		}
+
 		return html`
 			<h3>${this.localize('selectedGradeItemsHeader')}</h3>
 			<div class="d2l-grade-items-container">

@@ -32,12 +32,15 @@ export default {
 	"DeselectAllButton": "Deselect All {selectedStudentCount}",
 	"previousReportsButton": "View Previous Reports",
 	"searchUserPlaceholder": "Search Users",
-	"selectedGradeItemsHeader": "Selected Grade Items",
+	"selectedGradeItemsHeader": "Selected Grade Item Filters",
 	"selectFeedbackMessage": "Salesforce should now open in a new tab or window, where you can select feedback and complete the progress report.",
 	"numberOfStudentsPerGrade": "{studentCount} Students",
 	"studentGradesSummaryDialogTitle": "Selected Students ({selectedStudentsCount})",
 	"studentTableHeader": "Student",
 	"selectionCriteriaHeader": "Show students who fit",
 	"AllSelectionCriteria": "All selected criteria",
-	"AnySelectionCriteria": "Any selected criteria"
+	"AnySelectionCriteria": "Any selected criteria",
+	"nextButtonSkip": "Skip to Select Students",
+	"nextButtonContinue": "Continue to Select Students",
+	"emptyGradeFilter": "No Grade Item Filters Applied"
 };
