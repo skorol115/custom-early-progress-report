@@ -268,6 +268,16 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderTableHeaderBounds(id) {
+		if (!this.bounds || !this.enableEprEnhancements) return html``;
+
+		const Bounds = this.bounds.find((bound) => bound.GradeItemId === id);
+		const LowerBounds = Math.round(Bounds.LowerBounds * 100);
+		const UpperBounds = Math.round(Bounds.UpperBounds * 100);
+
+		return html`${LowerBounds}% - ${UpperBounds}%`;
+	}
+
 	_renderTableHeaderGradeItems() {
 		if (!this._gradeItems) return null;
 
@@ -279,17 +289,6 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 				</div>
 			</th>
 		`);
-	}
-
-	_renderTableHeaderBounds(id) {
-		if (!this.bounds || !this.enableEprEnhancements) return html``;
-
-		const Bounds = this.bounds.find((bound) => bound.GradeItemId === id);
-		
-		const LowerBounds = Math.round(Bounds.LowerBounds * 100);
-		const UpperBounds = Math.round(Bounds.UpperBounds* 100);
-
-		return html`${LowerBounds}% - ${UpperBounds}%`
 	}
 
 	_renderTableRowGradeItems(student) {
