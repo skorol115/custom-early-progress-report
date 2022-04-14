@@ -267,6 +267,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						orgUnitId=${ this.orgUnitId }
 						gradeItemQueries="${ this._getGradeItems }"
 						previousReportsURL="${this.previousReportsURL}"
+						?enableEprEnhancements="${this.enableEprEnhancements}"
 						?studentGradesSummaryOpened="${this.studentGradesSummaryOpened}"
 						@student-grades-summary-close=${this.closeStudentGradesSummary}
 						@student-grades-summary-continue-to-salesforce=${this._handleContinueToSalesforce}
