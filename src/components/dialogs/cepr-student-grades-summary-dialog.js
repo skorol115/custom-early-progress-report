@@ -72,7 +72,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 					font-weight: bold;
 					white-space: nowrap;
 				}
-				.d2l-tableHeader-container{
+				.d2l-tableHeader-container {
 					display: flex;
 					flex-direction: column;
 				}
