@@ -14,17 +14,17 @@ export class EprRequests {
 	static async getGradeItems(orgUnitId) {
 		return await this._get(Routes.GradeItems(orgUnitId));
 	}
-	
+
 	static async getNumUsers(orgUnitId, gradeItemQueries, searchTerm) {
 		return await this._post(Routes.NumUsers(orgUnitId, searchTerm), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
-	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, searchOption) {
-		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc, searchTerm, searchOption), JSON.stringify(gradeItemQueries)).then(r => r.json());
-	}
-
 	static async getPreferences() {
 		return await this._get(Routes.Preferences());
+	}
+
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, searchOption) {
+		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc, searchTerm, searchOption), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
 	static async setPreferences(searchOption) {
