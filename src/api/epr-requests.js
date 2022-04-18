@@ -7,18 +7,6 @@ export class EprRequests {
 		return await this._post(Routes.Records(orgUnitId), JSON.stringify(userIds)).then(r => r.json());
 	}
 
-	static async getPreferences() {
-		return await this._get(Routes.Preferences());
-	}
-
-	static async setPreferences(searchOption) {
-		return await this._put(Routes.Preferences(), JSON.stringify(searchOption)).then(r => r.json());
-	}
-
-	static async createRecord(orgUnitId, userIds) {
-		return await this._post(Routes.Records(orgUnitId), JSON.stringify(userIds)).then(r => r.json());
-	}
-
 	static async getAllUsers(orgUnitId, gradeItemQueries) {
 		return await this._post(Routes.AllUsers(orgUnitId), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
@@ -26,13 +14,21 @@ export class EprRequests {
 	static async getGradeItems(orgUnitId) {
 		return await this._get(Routes.GradeItems(orgUnitId));
 	}
-
+	
 	static async getNumUsers(orgUnitId, gradeItemQueries, searchTerm) {
 		return await this._post(Routes.NumUsers(orgUnitId, searchTerm), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
 
 	static async getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, searchOption) {
 		return await this._post(Routes.Users(orgUnitId, pageNumber, pageSize, sortField, sortDesc, searchTerm, searchOption), JSON.stringify(gradeItemQueries)).then(r => r.json());
+	}
+
+	static async getPreferences() {
+		return await this._get(Routes.Preferences());
+	}
+
+	static async setPreferences(searchOption) {
+		return await this._put(Routes.Preferences(), JSON.stringify(searchOption)).then(r => r.json());
 	}
 
 	// Helper Methods
