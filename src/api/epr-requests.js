@@ -7,6 +7,18 @@ export class EprRequests {
 		return await this._post(Routes.Records(orgUnitId), JSON.stringify(userIds)).then(r => r.json());
 	}
 
+	static async getPreferences() {
+		return await this._get(Routes.Preferences());
+	}
+
+	static async setPreferences(searchOption) {
+		return await this._put(Routes.Preferences(), JSON.stringify(searchOption)).then(r => r.json());
+	}
+
+	static async createRecord(orgUnitId, userIds) {
+		return await this._post(Routes.Records(orgUnitId), JSON.stringify(userIds)).then(r => r.json());
+	}
+
 	static async getAllUsers(orgUnitId, gradeItemQueries) {
 		return await this._post(Routes.AllUsers(orgUnitId), JSON.stringify(gradeItemQueries)).then(r => r.json());
 	}
