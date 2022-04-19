@@ -269,8 +269,6 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 	}
 
 	_renderTableHeaderBounds(id) {
-		if (!this.bounds || !this.enableEprEnhancements) return html``;
-
 		const Bounds = this.bounds.find((bound) => bound.GradeItemId === id);
 		const LowerBounds = Math.round(Bounds.LowerBounds * 100);
 		const UpperBounds = Math.round(Bounds.UpperBounds * 100);
@@ -285,7 +283,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 			<th>
 				<div class="d2l-tableHeader-container">
 					<b>${gradeItem.Name}</b>
-					${this._renderTableHeaderBounds(gradeItem.GradeItemId)}
+					${this.enableEprEnhancements ? this._renderTableHeaderBounds(gradeItem.GradeItemId) : html``}
 				</div>
 			</th>
 		`);
