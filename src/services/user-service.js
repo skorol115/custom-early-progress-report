@@ -25,7 +25,6 @@ export class UserService {
 
 	static setSelectionCriteria(isAll) {
 		this.searchAllCriteria = isAll;
-		this.setUserPreferences();
 	}
 
 	static async setUserPreferences() {

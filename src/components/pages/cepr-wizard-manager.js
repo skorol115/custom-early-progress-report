@@ -159,6 +159,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	async _handleStepOneNext() {
 		if (this.enableEprEnhancements && this.gradeItemQueries.length === 0) {
+			this.userService.setUserPreferences();
 			this.wizard.next();
 			this.currentStep = this.wizard.currentStep();
 			return;

@@ -28,7 +28,7 @@ export class EprRequests {
 	}
 
 	static async setPreferences(searchOption) {
-		return await this._put(Routes.Preferences(), JSON.stringify(searchOption)).then(r => r.json());
+		return await this._put(Routes.Preferences(), JSON.stringify(searchOption));
 	}
 
 	// Helper Methods
