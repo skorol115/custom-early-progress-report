@@ -211,7 +211,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 
 		const response = await this.userService.getUserPreferences(this.orgUnitId);
-		this.userService.setSelectionCriteria(!!+response.SearchOption);
+		this.userService.setSelectionCriteria(response.SearchOption);
 
 		this.isQuerying = false;
 	}
