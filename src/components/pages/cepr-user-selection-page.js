@@ -70,7 +70,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			},
 			studentGradesSummaryOpened: {
 				type: Boolean
-			}
+			},
+			enableEprEnhancements: {
+				type: Boolean
+			},
 		};
 	}
 
@@ -404,6 +407,14 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			() => this.gradeItemQueries.map(({ GradeItemId }) => GradeItemId)
 		);
 
+		const bounds = guard(
+			[this.gradeItemQueries],
+			() => this.gradeItemQueries.map(({ GradeItemId, LowerBounds, UpperBounds }) => ({
+				GradeItemId,
+				LowerBounds,
+				UpperBounds
+			}))
+		);
 		return html`
 			${this._renderSelectedGradeItems()}
 			<div class="d2l-action-bar">
@@ -489,9 +500,11 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			></d2l-labs-pagination>
 			<cepr-student-grades-summary-dialog
 				orgUnitId=${this.orgUnitId}
+				?enableEprEnhancements="${this.enableEprEnhancements}"
 				?opened="${this.studentGradesSummaryOpened}"
 				.studentsWithGrades=${studentsWithGrades}
 				.gradeItemIds=${gradeItemIds}
+				.bounds=${bounds}
 				@close=${this._handleStudentGradesSummaryClose}
 				@continue-to-salesforce=${this._handleStudentGradesSummaryContinueToSalesforce}
 			></cepr-student-grades-summary-dialog>

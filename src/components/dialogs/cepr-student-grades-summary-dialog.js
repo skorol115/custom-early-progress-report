@@ -40,7 +40,13 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 			},
 			_sortedStudents: {
 				attribute: false
-			}
+			},
+			bounds: {
+				attribute: false
+			},
+			enableEprEnhancements: {
+				type: Boolean
+			},
 		};
 	}
 
@@ -66,6 +72,10 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 					font-weight: bold;
 					white-space: nowrap;
 				}
+				.d2l-tableHeader-container {
+					display: flex;
+					flex-direction: column;
+				}
 			`
 		];
 	}
@@ -76,6 +86,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		this.opened = false;
 		this.studentsWithGrades = [];
 		this.gradeItemIds = [];
+		this.bounds = [];
 		this._allGradeItemsData = null;
 		this.pageNumber = 1;
 		this.pageSize = 25;
@@ -257,12 +268,23 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		`;
 	}
 
+	_renderTableHeaderBounds(id) {
+		const Bounds = this.bounds.find((bound) => bound.GradeItemId === id);
+		const LowerBounds = Math.round(Bounds.LowerBounds * 100);
+		const UpperBounds = Math.round(Bounds.UpperBounds * 100);
+
+		return html`${LowerBounds}% - ${UpperBounds}%`;
+	}
+
 	_renderTableHeaderGradeItems() {
 		if (!this._gradeItems) return null;
 
 		return this._gradeItems.map((gradeItem) => html`
 			<th>
-				${gradeItem.Name}
+				<div class="d2l-tableHeader-container">
+					<b>${gradeItem.Name}</b>
+					${this.enableEprEnhancements ? this._renderTableHeaderBounds(gradeItem.GradeItemId) : html``}
+				</div>
 			</th>
 		`);
 	}
