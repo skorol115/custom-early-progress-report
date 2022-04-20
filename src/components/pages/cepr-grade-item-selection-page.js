@@ -121,6 +121,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.isLoading = true;
 
 		await this._queryGradeItems();
+		await this._queryUserPreferences();
 
 		this.isLoading = false;
 	}
@@ -206,6 +207,15 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 	}
 
+	async _queryUserPreferences() {
+		this.isQuerying = true;
+
+		const response = await this.userService.getUserPreferences(this.orgUnitId);
+		this.userService.setSelectionCriteria(response.SearchOption);
+
+		this.isQuerying = false;
+	}
+
 	_renderGradeItem(gradeItem) {
 		return html`
 			<tr ?selected=${this.gradeItemSelection.has(gradeItem.GradeItemId)}>
@@ -262,7 +272,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	_renderGradeItems() {
 		return html`
-			${ this.enableEprEnhancements ? this._renderSelectionContainer() : html`` }
+			${ this.enableEprEnhancements && !this.isQuerying ? this._renderSelectionContainer() : html`` }
 			<d2l-table-wrapper sticky-headers>
 				<table class="d2l-table">
 					<thead>
@@ -314,6 +324,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 							name="selectCriteriaGroup"
 							value="all"
 							@change="${this._setCriteriaSelection}"
+							?checked=${this.userService.searchAllCriteria}
 						>
 						${this.localize('AllSelectionCriteria')}
 					</label>
@@ -341,10 +352,10 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _setCriteriaSelection(e) {
 		if (e.target.value === 'any') {
-			this.userService.searchAllCriteria = false;
+			this.userService.setSelectionCriteria(false);
 			return;
 		}
-		this.userService.searchAllCriteria = true;
+		this.userService.setSelectionCriteria(true);
 	}
 
 	async _setGradeItemLowerBounds(e) {

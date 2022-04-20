@@ -13,8 +13,22 @@ export class UserService {
 		return numUsers;
 	}
 
+	static async getUserPreferences() {
+		const preferences = await EprRequests.getPreferences();
+		return preferences;
+	}
+
 	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = [], searchTerm = '') {
 		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, +this.searchAllCriteria);
 		return users;
+	}
+
+	static setSelectionCriteria(isAll) {
+		this.searchAllCriteria = isAll;
+	}
+
+	static async setUserPreferences() {
+		const response = await EprRequests.setPreferences(+this.searchAllCriteria);
+		return response;
 	}
 }
