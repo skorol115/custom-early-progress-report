@@ -80,6 +80,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
 		this.hideSelectFeedbackAlert = true;
+		this.isSearchAllCriteria = false;
 		this.selectedUsers = [];
 	}
 
@@ -134,6 +135,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.hideNoUsersAlert = true;
 	}
 
+	_userPreferencesChange(e) {
+		this.isSearchAllCriteria = e.detail.isSearchAllCriteria;
+	}
+
 	_handleContinueToSalesforce() {
 		this.recordService.createRecord(this.orgUnitId, this.selectedUsers)
 			.then((redirectUrl) => {
@@ -159,7 +164,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	async _handleStepOneNext() {
 		if (this.enableEprEnhancements && this.gradeItemQueries.length === 0) {
-			this.userService.setUserPreferences();
+			this.userService.setUserPreferences(this.isSearchAllCriteria);
 			this.wizard.next();
 			this.currentStep = this.wizard.currentStep();
 			return;
@@ -276,7 +281,8 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 					<cepr-grade-item-selection-page
 						title=""
 						orgUnitId=${this.orgUnitId}
-						@change=${this._gradeItemQueryChange}
+						@grades-change=${this._gradeItemQueryChange}
+						@user-preferences-change=${this._userPreferencesChange}
 						?enableEprEnhancements="${this.enableEprEnhancements}">
 					</cepr-grade-item-selection-page>
 				</d2l-labs-step>
@@ -292,6 +298,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						previousReportsURL="${this.previousReportsURL}"
 						?enableEprEnhancements="${this.enableEprEnhancements}"
 						?studentGradesSummaryOpened="${this.studentGradesSummaryOpened}"
+						?isSearchAllCriteria="${this.isSearchAllCriteria}"
 						@student-grades-summary-close=${this.closeStudentGradesSummary}
 						@student-grades-summary-continue-to-salesforce=${this._handleContinueToSalesforce}
 					></cepr-user-selection-page>

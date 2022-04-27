@@ -74,6 +74,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			enableEprEnhancements: {
 				type: Boolean
 			},
+			isSearchAllCriteria: {
+				type: Boolean
+			}
 		};
 	}
 
@@ -190,7 +193,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	updated(changedProperties) {
 		super.updated(changedProperties);
 
-		if (changedProperties.has('gradeItemQueries')) {
+		if (changedProperties.has('gradeItemQueries') && changedProperties.get('gradeItemQueries')) {
 			this._getUserList();
 		}
 	}
@@ -299,7 +302,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm);
+		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm, this.isSearchAllCriteria);
 		this.isQuerying = false;
 	}
 
@@ -415,6 +418,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 				UpperBounds
 			}))
 		);
+
 		return html`
 			${this._renderSelectedGradeItems()}
 			<div class="d2l-action-bar">
