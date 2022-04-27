@@ -109,7 +109,7 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		const isLoading = !this._allGradeItemsData
 			|| !this._gradeItems
 			|| !this._sortedStudents
-			|| this.gradeItemIds.length != this._gradeItems.length;
+			|| this.gradeItemIds.length !== this._gradeItems.length;
 
 		return html`
 		<d2l-dialog
