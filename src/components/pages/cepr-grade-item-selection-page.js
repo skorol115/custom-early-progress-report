@@ -207,26 +207,12 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = false;
 	}
 
-	_setGradeItem(gradeItem) {
-			const gradeItemId = gradeItem.GradeItemId;
-			const gradeItemName = gradeItem.Name;
-			this.gradeItemList.push(gradeItem);
-			if (!this.gradeItemHash.has(gradeItemId)) {
-			this.gradeItemHash.set(gradeItemId, {
-				GradeItemId: gradeItemId,
-				GradeItemName: gradeItemName,
-				LowerBounds: 0,
-				UpperBounds: 100
-			});
-		}
-	}
-
 	async _queryUserPreferences() {
 		this.isQuerying = true;
 
 		const response = await this.userService.getUserPreferences(this.orgUnitId);
 		const searchOption = response.SearchOption;
-		if(searchOption) {
+		if (searchOption) {
 			this.isSearchAllCriteria = searchOption;
 			this._dispatchOnPreferencesChange();
 		}
@@ -376,6 +362,20 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		}
 		this.isSearchAllCriteria = true;
 		this._dispatchOnPreferencesChange();
+	}
+
+	_setGradeItem(gradeItem) {
+		const gradeItemId = gradeItem.GradeItemId;
+		const gradeItemName = gradeItem.Name;
+		this.gradeItemList.push(gradeItem);
+		if (!this.gradeItemHash.has(gradeItemId)) {
+			this.gradeItemHash.set(gradeItemId, {
+				GradeItemId: gradeItemId,
+				GradeItemName: gradeItemName,
+				LowerBounds: 0,
+				UpperBounds: 100
+			});
+		}
 	}
 
 	async _setGradeItemLowerBounds(e) {

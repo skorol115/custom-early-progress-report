@@ -135,10 +135,6 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.hideNoUsersAlert = true;
 	}
 
-	_userPreferencesChange(e) {
-		this.isSearchAllCriteria = e.detail.isSearchAllCriteria;
-	}
-
 	_handleContinueToSalesforce() {
 		this.recordService.createRecord(this.orgUnitId, this.selectedUsers)
 			.then((redirectUrl) => {
@@ -310,6 +306,10 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 				</d2l-labs-step>
 			</d2l-labs-wizard>
 		`;
+	}
+
+	_userPreferencesChange(e) {
+		this.isSearchAllCriteria = e.detail.isSearchAllCriteria;
 	}
 
 	_userSelectionChange(e) {
