@@ -77,6 +77,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 		this.currentStep = 0;
 		this.gradeItemQueries = [];
+		this.gradeItemList = [];
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
 		this.hideSelectFeedbackAlert = true;
@@ -109,7 +110,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	get _getGradeItems() {
-		return JSON.stringify(this.gradeItemQueries);
+		return JSON.stringify(this.gradeItemList);
 	}
 
 	_disableNextButton() {
@@ -165,6 +166,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 			return;
 		}
 
+		this.gradeItemList = this.gradeItemQueries;
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		if (numUsers === 0) {
 			this.hideNoUsersAlert = false;
