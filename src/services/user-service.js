@@ -1,7 +1,6 @@
 import { EprRequests } from '../api/epr-requests';
 
 export class UserService {
-	static searchAllCriteria = false;
 
 	static async getAllUsers(orgUnitId, gradeItemQueries = []) {
 		const allUsers = await EprRequests.getAllUsers(orgUnitId, gradeItemQueries);
@@ -18,17 +17,13 @@ export class UserService {
 		return preferences;
 	}
 
-	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = [], searchTerm = '') {
-		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, +this.searchAllCriteria);
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = [], searchTerm = '', isSearchAllCriteria) {
+		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, +isSearchAllCriteria);
 		return users;
 	}
 
-	static setSelectionCriteria(isAll) {
-		this.searchAllCriteria = isAll;
-	}
-
-	static async setUserPreferences() {
-		const response = await EprRequests.setPreferences(+this.searchAllCriteria);
+	static async setUserPreferences(isSearchAllCriteria) {
+		const response = await EprRequests.setPreferences(+isSearchAllCriteria);
 		return response;
 	}
 }

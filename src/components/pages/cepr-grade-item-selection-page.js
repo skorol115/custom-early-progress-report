@@ -111,6 +111,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		this.gradeItemSelection = new Set();
 
+		this.isSearchAllCriteria = false;
 		this.isLoading = true;
 		this.isQuerying = false;
 	}
@@ -132,7 +133,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 			`;
 	}
 
-	_dispatchOnChange() {
+	_dispatchOnGradesChange() {
 
 		// Compile selected grade items & ranges into a gradeItemQueries array
 		let gradeItemInvalid = false;
@@ -172,7 +173,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		});
 
 		// Dispatch change event to wizard wrapper
-		const change = new CustomEvent('change', {
+		const change = new CustomEvent('grades-change', {
 			detail: {
 				gradeItemInvalid: gradeItemInvalid,
 				gradeItemQueries: gradeItemQueries
@@ -183,6 +184,17 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.requestUpdate();
 	}
 
+	_dispatchOnPreferencesChange() {
+
+		const change = new CustomEvent('user-preferences-change', {
+			detail: {
+				isSearchAllCriteria: this.isSearchAllCriteria,
+			}
+		});
+
+		this.dispatchEvent(change);
+	}
+
 	async _queryGradeItems() {
 		this.isQuerying = true;
 
@@ -190,19 +202,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		// Build a list of grade items to render, and a hash of query data to reference in constant time
 		this.gradeItemList = [];
-		gradeItems.forEach(gradeItem => {
-			const gradeItemId = gradeItem.GradeItemId;
-			const gradeItemName = gradeItem.Name;
-			this.gradeItemList.push(gradeItem);
-			if (!this.gradeItemHash.has(gradeItemId)) {
-				this.gradeItemHash.set(gradeItemId, {
-					GradeItemId: gradeItemId,
-					GradeItemName: gradeItemName,
-					LowerBounds: 0,
-					UpperBounds: 100
-				});
-			}
-		});
+		gradeItems.forEach(gradeItem => this._setGradeItem(gradeItem));
 
 		this.isQuerying = false;
 	}
@@ -211,7 +211,11 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.isQuerying = true;
 
 		const response = await this.userService.getUserPreferences(this.orgUnitId);
-		this.userService.setSelectionCriteria(response.SearchOption);
+		const searchOption = response.SearchOption;
+		if (searchOption) {
+			this.isSearchAllCriteria = searchOption;
+			this._dispatchOnPreferencesChange();
+		}
 
 		this.isQuerying = false;
 	}
@@ -324,7 +328,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 							name="selectCriteriaGroup"
 							value="all"
 							@change="${this._setCriteriaSelection}"
-							?checked=${this.userService.searchAllCriteria}
+							?checked=${this.isSearchAllCriteria}
 						>
 						${this.localize('AllSelectionCriteria')}
 					</label>
@@ -347,15 +351,31 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.gradeItemList.forEach(gradeItem => {
 			this._setGradeItemSelection(gradeItem.GradeItemId, checkAllItems);
 		});
-		this._dispatchOnChange();
+		this._dispatchOnGradesChange();
 	}
 
 	async _setCriteriaSelection(e) {
 		if (e.target.value === 'any') {
-			this.userService.setSelectionCriteria(false);
+			this.isSearchAllCriteria = false;
+			this._dispatchOnPreferencesChange();
 			return;
 		}
-		this.userService.setSelectionCriteria(true);
+		this.isSearchAllCriteria = true;
+		this._dispatchOnPreferencesChange();
+	}
+
+	_setGradeItem(gradeItem) {
+		const gradeItemId = gradeItem.GradeItemId;
+		const gradeItemName = gradeItem.Name;
+		this.gradeItemList.push(gradeItem);
+		if (!this.gradeItemHash.has(gradeItemId)) {
+			this.gradeItemHash.set(gradeItemId, {
+				GradeItemId: gradeItemId,
+				GradeItemName: gradeItemName,
+				LowerBounds: 0,
+				UpperBounds: 100
+			});
+		}
 	}
 
 	async _setGradeItemLowerBounds(e) {
@@ -365,7 +385,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.gradeItemHash.get(gradeItemId).LowerBounds = e.target.value = value;
 		await e.target.updateComplete;
 
-		this._dispatchOnChange();
+		this._dispatchOnGradesChange();
 	}
 
 	_setGradeItemSelection(gradeItemId, selected) {
@@ -383,7 +403,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		this.gradeItemHash.get(gradeItemId).UpperBounds = e.target.value = value;
 		await e.target.updateComplete;
 
-		this._dispatchOnChange();
+		this._dispatchOnGradesChange();
 	}
 
 	_setInputInvalidState(percentInputId, validationError = null) {
@@ -398,7 +418,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		const gradeItemSelected = e.target.checked;
 		const gradeItemId = parseInt(e.target.id);
 		this._setGradeItemSelection(gradeItemId, gradeItemSelected);
-		this._dispatchOnChange();
+		this._dispatchOnGradesChange();
 	}
 }
 customElements.define('cepr-grade-item-selection-page', CeprGradeItemSelectionPage);

@@ -108,7 +108,8 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 		});
 		const isLoading = !this._allGradeItemsData
 			|| !this._gradeItems
-			|| !this._sortedStudents;
+			|| !this._sortedStudents
+			|| this.gradeItemIds.length !== this._gradeItems.length;
 
 		return html`
 		<d2l-dialog
@@ -269,9 +270,10 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 	}
 
 	_renderTableHeaderBounds(id) {
-		const Bounds = this.bounds.find((bound) => bound.GradeItemId === id);
-		const LowerBounds = Math.round(Bounds.LowerBounds * 100);
-		const UpperBounds = Math.round(Bounds.UpperBounds * 100);
+		const bounds = this.bounds.find((bound) => bound.GradeItemId === id);
+
+		const LowerBounds = Math.round(bounds.LowerBounds * 100);
+		const UpperBounds = Math.round(bounds.UpperBounds * 100);
 
 		return html`${LowerBounds}% - ${UpperBounds}%`;
 	}
