@@ -192,13 +192,11 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	updated(changedProperties) {
 		super.updated(changedProperties);
-		console.log(changedProperties)
 		if (changedProperties.has('gradeItemQueries') &&
 			changedProperties.get('gradeItemQueries') ||
 			changedProperties.has('isSearchAllCriteria') &&
-			changedProperties.get('isSearchAllCriteria') != undefined
+			changedProperties.get('isSearchAllCriteria') !== undefined
 		) {
-			console.log("update")
 			this._getUserList();
 		}
 	}
