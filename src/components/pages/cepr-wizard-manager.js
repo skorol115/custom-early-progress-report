@@ -160,14 +160,16 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	async _handleStepOneNext() {
-		if (this.enableEprEnhancements && this.gradeItemQueries.length === 0) {
+		this.gradeItemList = this.gradeItemQueries;
+		if (this.enableEprEnhancements) {
 			this.userService.setUserPreferences(this.isSearchAllCriteria);
-			this.wizard.next();
-			this.currentStep = this.wizard.currentStep();
-			return;
+			if (this.gradeItemQueries.length === 0) {
+				this.wizard.next();
+				this.currentStep = this.wizard.currentStep();
+				return;
+			}
 		}
 
-		this.gradeItemList = this.gradeItemQueries;
 		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
 		if (numUsers === 0) {
 			this.hideNoUsersAlert = false;

@@ -192,8 +192,13 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	updated(changedProperties) {
 		super.updated(changedProperties);
-
-		if (changedProperties.has('gradeItemQueries') && changedProperties.get('gradeItemQueries')) {
+		console.log(changedProperties)
+		if (changedProperties.has('gradeItemQueries') &&
+			changedProperties.get('gradeItemQueries') ||
+			changedProperties.has('isSearchAllCriteria') &&
+			changedProperties.get('isSearchAllCriteria') != undefined
+		) {
+			console.log("update")
 			this._getUserList();
 		}
 	}
@@ -277,7 +282,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _queryAllUsers() {
 		this.isQuerying = true;
-		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries);
+		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries, this.isSearchAllCriteria);
 		this.isQuerying = false;
 	}
 
@@ -295,7 +300,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm, this.isSearchAllCriteria);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 		this.pageNumber = 1;
 	}
