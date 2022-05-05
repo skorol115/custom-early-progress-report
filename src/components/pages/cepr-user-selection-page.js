@@ -178,6 +178,15 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this._studentGradesSummaryData = [];
 	}
 
+	checkForGradeQueriesUpdated(changedProperties) {
+		return changedProperties.has('gradeItemQueries') && changedProperties.get('gradeItemQueries');
+	}
+
+	checkForGradeSelectionCriteriaUpdated(changedProperties) {
+		return changedProperties.has('isSearchAllCriteria') &&
+			changedProperties.get('isSearchAllCriteria') !== undefined;
+	}
+
 	async connectedCallback() {
 		super.connectedCallback();
 
@@ -192,10 +201,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	updated(changedProperties) {
 		super.updated(changedProperties);
-		if (changedProperties.has('gradeItemQueries') &&
-			changedProperties.get('gradeItemQueries') ||
-			changedProperties.has('isSearchAllCriteria') &&
-			changedProperties.get('isSearchAllCriteria') !== undefined
+		if (this.checkForGradeQueriesUpdated(changedProperties) ||
+			this.checkForGradeSelectionCriteriaUpdated(changedProperties)
 		) {
 			this._getUserList();
 		}
