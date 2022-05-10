@@ -2,13 +2,13 @@ import { EprRequests } from '../api/epr-requests';
 
 export class UserService {
 
-	static async getAllUsers(orgUnitId, gradeItemQueries = [], isSearchAllCriteria = false) {
-		const allUsers = await EprRequests.getAllUsers(orgUnitId, gradeItemQueries, +isSearchAllCriteria);
+	static async getAllUsers(orgUnitId, gradeItemQueries = [], searchOption = false) {
+		const allUsers = await EprRequests.getAllUsers(orgUnitId, gradeItemQueries, +searchOption);
 		return allUsers;
 	}
 
-	static async getNumUsers(orgUnitId, gradeItemQueries = [], searchTerm = '', isSearchAllCriteria = false) {
-		const numUsers = await EprRequests.getNumUsers(orgUnitId, gradeItemQueries, searchTerm, +isSearchAllCriteria);
+	static async getNumUsers(orgUnitId, gradeItemQueries = [], searchTerm = '', searchOption = false) {
+		const numUsers = await EprRequests.getNumUsers(orgUnitId, gradeItemQueries, searchTerm, +searchOption);
 		return numUsers;
 	}
 
@@ -17,13 +17,13 @@ export class UserService {
 		return preferences;
 	}
 
-	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = [], searchTerm = '', isSearchAllCriteria = false) {
-		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, +isSearchAllCriteria);
+	static async getUsers(orgUnitId, pageNumber, pageSize, sortField = 0, sortDesc = false, gradeItemQueries = [], searchTerm = '', searchOption = false) {
+		const users = await EprRequests.getUsers(orgUnitId, pageNumber, pageSize, sortField, sortDesc, gradeItemQueries, searchTerm, +searchOption);
 		return users;
 	}
 
-	static async setUserPreferences(isSearchAllCriteria) {
-		const response = await EprRequests.setPreferences(+isSearchAllCriteria);
+	static async setUserPreferences(searchOption) {
+		const response = await EprRequests.setPreferences(+searchOption);
 		return response;
 	}
 }
