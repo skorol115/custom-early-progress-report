@@ -81,7 +81,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 		this.gradeItemInvalid = false;
 		this.hideNoUsersAlert = true;
 		this.hideSelectFeedbackAlert = true;
-		this.isSearchAllCriteria = false;
+		this.searchOption = 0;
 		this.selectedUsers = [];
 	}
 
@@ -162,7 +162,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	async _handleStepOneNext() {
 		this.gradeItemList = this.gradeItemQueries;
 		if (this.enableEprEnhancements) {
-			this.userService.setUserPreferences(this.isSearchAllCriteria);
+			this.userService.setUserPreferences(this.searchOption);
 			if (this.gradeItemQueries.length === 0) {
 				this.wizard.next();
 				this.currentStep = this.wizard.currentStep();
@@ -298,7 +298,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 						previousReportsURL="${this.previousReportsURL}"
 						?enableEprEnhancements="${this.enableEprEnhancements}"
 						?studentGradesSummaryOpened="${this.studentGradesSummaryOpened}"
-						?isSearchAllCriteria="${this.isSearchAllCriteria}"
+						searchOption="${this.searchOption}"
 						@student-grades-summary-close=${this.closeStudentGradesSummary}
 						@student-grades-summary-continue-to-salesforce=${this._handleContinueToSalesforce}
 					></cepr-user-selection-page>
@@ -313,7 +313,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 	}
 
 	_userPreferencesChange(e) {
-		this.isSearchAllCriteria = e.detail.isSearchAllCriteria;
+		this.searchOption = e.detail.searchOption;
 	}
 
 	_userSelectionChange(e) {

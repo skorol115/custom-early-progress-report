@@ -74,8 +74,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 			enableEprEnhancements: {
 				type: Boolean
 			},
-			isSearchAllCriteria: {
-				type: Boolean
+			searchOption: {
+				type: Number
 			}
 		};
 	}
@@ -176,6 +176,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.gradedStudentCount = new Map();
 		this.studentGradesSummaryOpened = false;
 		this._studentGradesSummaryData = [];
+		this.previousSearchOption = 0;
 	}
 
 	async connectedCallback() {
@@ -195,6 +196,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		if (this.checkForGradeQueriesUpdated(changedProperties) ||
 			this.checkForGradeSelectionCriteriaUpdated(changedProperties)
 		) {
+			this.previousSearchOption = changedProperties.get('searchOption');
 			this._getUserList();
 		}
 	}
@@ -204,7 +206,10 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	checkForGradeSelectionCriteriaUpdated(changedProperties) {
-		return changedProperties.has('isSearchAllCriteria') && changedProperties.get('isSearchAllCriteria') !== undefined;
+		const changedSearchOption = changedProperties.get('searchOption');
+		return changedProperties.has('searchOption') &&
+			changedSearchOption !== undefined &&
+			changedSearchOption !== this.previousSearchOption;
 	}
 
 	_defaultSelectAll() {
@@ -286,7 +291,7 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _queryAllUsers() {
 		this.isQuerying = true;
-		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries, this.isSearchAllCriteria);
+		this.allUsers = await this.userService.getAllUsers(this.orgUnitId, this.gradeItemQueries, this.searchOption);
 		this.isQuerying = false;
 	}
 
@@ -304,14 +309,14 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	async _queryNumUsers() {
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm, this.isSearchAllCriteria);
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, this.searchTerm, this.searchOption);
 		this.maxPage = Math.max(Math.ceil(numUsers / this.pageSize), 1);
 		this.pageNumber = 1;
 	}
 
 	async _queryUsers() {
 		this.isQuerying = true;
-		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm, this.isSearchAllCriteria);
+		this.users = await this.userService.getUsers(this.orgUnitId, this.pageNumber, this.pageSize, this.sortField, this.sortDesc, this.gradeItemQueries, this.searchTerm, this.searchOption);
 		this.isQuerying = false;
 	}
 
