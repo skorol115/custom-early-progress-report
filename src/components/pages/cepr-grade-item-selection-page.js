@@ -111,7 +111,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		this.gradeItemSelection = new Set();
 
-		this.isSearchAllCriteria = false;
+		this.searchOption = 0;
 		this.isLoading = true;
 		this.isQuerying = false;
 	}
@@ -188,7 +188,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		const change = new CustomEvent('user-preferences-change', {
 			detail: {
-				isSearchAllCriteria: this.isSearchAllCriteria,
+				searchOption: this.searchOption,
 			}
 		});
 
@@ -213,7 +213,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 		const response = await this.userService.getUserPreferences(this.orgUnitId);
 		const searchOption = response.SearchOption;
 		if (searchOption) {
-			this.isSearchAllCriteria = searchOption;
+			this.searchOption = searchOption;
 			this._dispatchOnPreferencesChange();
 		}
 
@@ -328,7 +328,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 							name="selectCriteriaGroup"
 							value="all"
 							@change="${this._setCriteriaSelection}"
-							?checked=${this.isSearchAllCriteria}
+							?checked=${this.searchOption === 1}
 						>
 						${this.localize('AllSelectionCriteria')}
 					</label>
@@ -356,11 +356,11 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 	async _setCriteriaSelection(e) {
 		if (e.target.value === 'any') {
-			this.isSearchAllCriteria = false;
+			this.searchOption = 0;
 			this._dispatchOnPreferencesChange();
 			return;
 		}
-		this.isSearchAllCriteria = true;
+		this.searchOption = 1;
 		this._dispatchOnPreferencesChange();
 	}
 
