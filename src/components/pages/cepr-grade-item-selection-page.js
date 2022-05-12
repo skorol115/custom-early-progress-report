@@ -123,7 +123,7 @@ class CeprGradeItemSelectionPage extends LocalizeMixin(LitElement) {
 
 		await this._queryGradeItems();
 
-		if(this.enableEprEnhancements){
+		if (this.enableEprEnhancements) {
 			await this._queryUserPreferences();
 		}
 
