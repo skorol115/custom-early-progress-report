@@ -292,6 +292,8 @@ class CeprStudentGradesSummaryDialog extends LocalizeMixin(LitElement) {
 	}
 
 	_renderTableRowGradeItems(student) {
+		if (!student.Grades) return null;
+
 		return this._gradeItems.map((gradeItem) => {
 			const grade = student.Grades[gradeItem.GradeItemId];
 

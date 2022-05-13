@@ -193,10 +193,11 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	updated(changedProperties) {
 		super.updated(changedProperties);
-		if (this.checkForGradeQueriesUpdated(changedProperties) ||
-			this.checkForGradeSelectionCriteriaUpdated(changedProperties)
-		) {
-			this.previousSearchOption = changedProperties.get('searchOption');
+		let criteriaChanged = false;
+		if (this.enableEprEnhancements) {
+			criteriaChanged = this.checkForGradeSelectionCriteriaUpdated(changedProperties);
+		}
+		if (this.checkForGradeQueriesUpdated(changedProperties) || criteriaChanged) {
 			this._getUserList();
 		}
 	}
@@ -207,9 +208,15 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	checkForGradeSelectionCriteriaUpdated(changedProperties) {
 		const changedSearchOption = changedProperties.get('searchOption');
-		return changedProperties.has('searchOption') &&
+
+		if (changedProperties.has('searchOption') &&
 			changedSearchOption !== undefined &&
-			changedSearchOption !== this.previousSearchOption;
+			changedSearchOption !== this.previousSearchOption
+		) {
+			this.previousSearchOption = changedSearchOption;
+			return true;
+		}
+		return false;
 	}
 
 	_defaultSelectAll() {
