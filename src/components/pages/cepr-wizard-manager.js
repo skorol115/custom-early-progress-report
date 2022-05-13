@@ -162,17 +162,29 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	async _handleStepOneNext() {
 		this.gradeItemList = this.gradeItemQueries;
-		if (this.enableEprEnhancements) {
-			this.userService.setUserPreferences(this.userPreference);
-			this.searchOption = this.userPreference;
-			if (this.gradeItemQueries.length === 0) {
-				this.wizard.next();
-				this.currentStep = this.wizard.currentStep();
+
+		if (!this.enableEprEnhancements) {
+			const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
+			if (numUsers === 0) {
+				this.hideNoUsersAlert = false;
 				return;
 			}
+
+			this.wizard.next();
+			this.currentStep = this.wizard.currentStep();
+			return;
 		}
 
-		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries);
+		this.searchOption = this.userPreference;
+		this.userService.setUserPreferences(this.searchOption);
+
+		if (this.gradeItemQueries.length === 0) {
+			this.wizard.next();
+			this.currentStep = this.wizard.currentStep();
+			return;
+		}
+
+		const numUsers = await this.userService.getNumUsers(this.orgUnitId, this.gradeItemQueries, '', this.searchOption);
 		if (numUsers === 0) {
 			this.hideNoUsersAlert = false;
 			return;
@@ -316,6 +328,7 @@ class CeprWizardManager extends LocalizeMixin(LitElement) {
 
 	_userPreferencesChange(e) {
 		this.userPreference = e.detail.searchOption;
+		this.hideNoUsersAlert = true;
 	}
 
 	_userSelectionChange(e) {
