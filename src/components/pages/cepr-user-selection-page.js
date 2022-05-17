@@ -176,7 +176,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		this.gradedStudentCount = new Map();
 		this.studentGradesSummaryOpened = false;
 		this._studentGradesSummaryData = [];
-		this.previousSearchOption = 0;
 	}
 
 	async connectedCallback() {
@@ -193,11 +192,8 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 
 	updated(changedProperties) {
 		super.updated(changedProperties);
-		let criteriaChanged = false;
-		if (this.enableEprEnhancements) {
-			criteriaChanged = this.checkForGradeSelectionCriteriaUpdated(changedProperties);
-		}
-		if (this.checkForGradeQueriesUpdated(changedProperties) || criteriaChanged) {
+
+		if (this.checkForGradeQueriesUpdated(changedProperties) || (this.enableEprEnhancements && this.checkForGradeSelectionCriteriaUpdated(changedProperties))) {
 			this._getUserList();
 		}
 	}
@@ -207,17 +203,9 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 	}
 
 	checkForGradeSelectionCriteriaUpdated(changedProperties) {
-		const changedSearchOption = changedProperties.get('searchOption');
-
-		if (changedProperties.has('searchOption') &&
-			changedSearchOption !== undefined &&
-			changedSearchOption !== this.previousSearchOption
-		) {
-			this.previousSearchOption = changedSearchOption;
-			return true;
-		}
-		return false;
+		return changedProperties.has('searchOption') && changedProperties.get('searchOption') !== undefined;
 	}
+
 
 	_defaultSelectAll() {
 		this.selectedUsers = new Set();
