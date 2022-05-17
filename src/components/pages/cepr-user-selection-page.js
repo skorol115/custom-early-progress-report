@@ -206,7 +206,6 @@ class CeprUserSelectionPage extends LocalizeMixin(LitElement) {
 		return changedProperties.has('searchOption') && changedProperties.get('searchOption') !== undefined;
 	}
 
-
 	_defaultSelectAll() {
 		this.selectedUsers = new Set();
 
